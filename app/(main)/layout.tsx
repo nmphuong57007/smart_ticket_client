@@ -10,8 +10,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
     <div className="flex min-h-screen flex-col">
       <Header />
 
-      <main className="flex-1 relative overflow-hidden">
-        <div className="relative z-10 container mx-auto py-8 flex justify-center min-h-[calc(100vh-theme(spacing.20)-theme(spacing.32))]">
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-8">
           {children}
         </div>
       </main>

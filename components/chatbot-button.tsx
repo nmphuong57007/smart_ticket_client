@@ -87,7 +87,7 @@ export default function ChatbotButton() {
     <>
       {/* Chat Window */}
       {isOpen && (
-        <Card className="fixed bottom-24 right-4 w-[380px] h-[500px] shadow-2xl z-50 flex flex-col">
+        <Card className="fixed bottom-24 right-4 w-full max-w-sm h-[32rem] shadow-2xl z-50 flex flex-col mx-4 sm:mx-0 sm:w-96">
           <CardHeader className="border-b">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -120,7 +120,7 @@ export default function ChatbotButton() {
                 }`}
               >
                 <div
-                  className={`max-w-[75%] rounded-lg px-4 py-2 ${
+                  className={`max-w-xs sm:max-w-sm rounded-lg px-4 py-2 ${
                     message.sender === "user"
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-foreground"

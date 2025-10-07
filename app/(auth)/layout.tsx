@@ -12,18 +12,13 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
 
       <main className="flex-1 relative overflow-hidden">
         {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070')"
-          }}
-        />
+        <div className="absolute inset-0 bg-auth-cinema" />
         
         {/* Overlay */}
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
 
         {/* Content */}
-        <div className="relative z-10 container mx-auto py-8 flex items-center justify-center min-h-full">
+        <div className="relative z-10 container mx-auto px-4 py-8 flex items-center justify-center min-h-full">
           {children}
         </div>
       </main>

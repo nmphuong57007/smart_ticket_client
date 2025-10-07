@@ -45,7 +45,7 @@ const socialLinks = [
 export default function Footer() {
   return (
     <footer className="bg-card border-t border-border">
-      <div className="container mx-auto py-16">
+      <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Logo và Social Media */}
           <div className="space-y-8">
@@ -56,14 +56,14 @@ export default function Footer() {
                 width={90}
                 height={90}
               />
-              <div>
+              {/* <div>
                 <h3 className="text-3xl font-bold text-primary leading-tight">
                   SMART
                 </h3>
                 <h3 className="text-3xl font-bold text-primary leading-tight">
                   TICKET
                 </h3>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex space-x-5">
