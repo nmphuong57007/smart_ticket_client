@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Online Movie Ticket Service",
+  title: "SmartTicket",
   description: "Online service for purchasing movie tickets",
 };
 
