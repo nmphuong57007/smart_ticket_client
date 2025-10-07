@@ -4,11 +4,20 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin, Calendar } from "lucide-react"
+import { format } from "date-fns"
+import { vi } from "date-fns/locale"
+import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin, Calendar as CalendarIcon } from "lucide-react"
 import Link from "next/link"
 
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import {
   Form,
   FormControl,
@@ -35,9 +44,9 @@ const registerSchema = z.object({
     .string()
     .min(1, "Số điện thoại là bắt buộc")
     .regex(/^[0-9]{10}$/, "Số điện thoại phải có 10 chữ số"),
-  dateOfBirth: z
-    .string()
-    .min(1, "Ngày sinh là bắt buộc"),
+  dateOfBirth: z.date().optional().refine((date) => !!date, {
+    message: "Ngày sinh là bắt buộc",
+  }),
   address: z
     .string()
     .min(1, "Địa chỉ là bắt buộc"),
@@ -72,7 +81,7 @@ export default function FormRegister() {
     defaultValues: {
       fullName: "",
       phone: "",
-      dateOfBirth: "",
+      dateOfBirth: undefined,
       address: "",
       email: "",
       gender: "",
@@ -159,18 +168,46 @@ export default function FormRegister() {
             control={form.control}
             name="dateOfBirth"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex flex-col">
                 <FormLabel>
-                  <Calendar className="w-4 h-4" />
+                  <CalendarIcon className="w-4 h-4" />
                   Ngày sinh <span className="text-destructive">*</span>
                 </FormLabel>
-                <FormControl>
-                  <Input
-                    type="date"
-                    className="h-11"
-                    {...field}
-                  />
-                </FormControl>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "h-11 w-full justify-start text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {field.value ? (
+                          format(field.value, "dd/MM/yyyy", { locale: vi })
+                        ) : (
+                          <span>Chọn ngày sinh</span>
+                        )}
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      locale={vi}
+                      initialFocus
+                      captionLayout="dropdown"
+                      fromYear={1900}
+                      toYear={new Date().getFullYear()}
+                    />
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}
