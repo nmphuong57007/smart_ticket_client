@@ -330,10 +330,7 @@ export default function FormRegister() {
             disabled={isLoading}
           >
             {isLoading ? (
-              <div className="flex items-center">
-                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
-                Đang đăng ký...
-              </div>
+              "Đang đăng ký..."
             ) : (
               <>
                 <User className="w-4 h-4 mr-2" />

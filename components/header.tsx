@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { ModeToggle } from "./mode-toggle";
 import { routes } from "../constants/site-config";
 
 function LogoSmartTicket() {
@@ -20,7 +21,6 @@ function LogoSmartTicket() {
         alt="Smart Ticket Logo"
         width={60}
         height={60}
-        className="w-[60px] h-[60px]"
       />
       <span className="text-2xl font-bold text-primary hidden sm:block">
         Smart Ticket
@@ -40,7 +40,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90 border-b border-border">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto">
         <div className="flex items-center justify-between h-20">
             {/* Logo */}
@@ -54,10 +54,9 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-foreground hover:text-primary font-semibold text-lg transition-colors duration-200 relative group"
+                  className="text-foreground hover:text-primary font-semibold text-lg transition-colors"
                 >
                   {item.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full"></span>
                 </Link>
               ))}
             </nav>
@@ -65,27 +64,24 @@ export default function Header() {
             {/* Search Bar */}
             <div className="hidden lg:flex items-center flex-1 max-w-md mx-6">
               <div className="relative w-full">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-muted-foreground" />
-                </div>
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="Tìm kiếm phim, rạp..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 pr-4 py-3 w-full rounded-full border-2 border-border focus:border-ring focus:ring-2 focus:ring-ring/20 bg-muted hover:bg-background transition-all duration-200 text-base"
+                  className="pl-12 rounded-full bg-muted"
                 />
               </div>
             </div>
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center space-x-3">
-              <Button variant="ghost" size="default" className="relative p-3">
-                <ShoppingCart className="h-6 w-6" />
-                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
-                  0
-                </span>
+              <Button variant="ghost" size="icon">
+                <ShoppingCart className="h-5 w-5" />
               </Button>
+
+              <ModeToggle />
 
               <div className="flex items-center space-x-3 ml-4">
                 <Button
@@ -98,7 +94,7 @@ export default function Header() {
                 </Button>
                 <Button
                   size="default"
-                  className="px-6 py-2 text-base font-medium"
+                  className="text-base font-medium"
                   asChild
                 >
                   <Link href={routes.register}>Đăng ký</Link>
@@ -108,23 +104,20 @@ export default function Header() {
 
             {/* Mobile menu button */}
             <div className="lg:hidden flex items-center space-x-2">
-              <Button variant="ghost" size="default" className="relative p-2">
-                <ShoppingCart className="h-6 w-6" />
-                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                  0
-                </span>
+              <Button variant="ghost" size="icon">
+                <ShoppingCart className="h-5 w-5" />
               </Button>
+              <ModeToggle />
               <Button
                 variant="ghost"
-                size="default"
+                size="icon"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="Toggle menu"
-                className="p-2"
               >
                 {isMenuOpen ? (
-                  <X className="h-7 w-7" />
+                  <X className="h-6 w-6" />
                 ) : (
-                  <Menu className="h-7 w-7" />
+                  <Menu className="h-6 w-6" />
                 )}
               </Button>
             </div>
@@ -132,19 +125,17 @@ export default function Header() {
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <div className="lg:hidden border-t border-border bg-background shadow-lg">
+            <div className="lg:hidden border-t bg-background">
               <div className="px-2 pt-2 pb-3 space-y-1">
                 {/* Mobile Search */}
                 <div className="relative mb-4">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5 text-muted-foreground" />
-                  </div>
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
                     type="text"
                     placeholder="Tìm kiếm phim, rạp..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 pr-4 py-3 w-full rounded-full border-2 border-border focus:border-ring focus:ring-2 focus:ring-ring/20 text-base"
+                    className="pl-12 rounded-full"
                   />
                 </div>
 
@@ -153,7 +144,7 @@ export default function Header() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="block px-4 py-3 text-foreground hover:text-primary hover:bg-muted rounded-lg font-semibold text-lg transition-colors duration-200"
+                    className="block px-4 py-3 text-foreground hover:text-primary hover:bg-muted rounded-lg font-semibold text-lg transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}
@@ -166,14 +157,14 @@ export default function Header() {
                     <Button
                       variant="outline"
                       size="default"
-                      className="flex-1 py-3 text-base font-medium"
+                      className="flex-1 text-base font-medium"
                       asChild
                     >
                       <Link href={routes.login}>Đăng nhập</Link>
                     </Button>
                     <Button
                       size="default"
-                      className="flex-1 py-3 text-base font-medium"
+                      className="flex-1 text-base font-medium"
                       asChild
                     >
                       <Link href={routes.register}>Đăng ký</Link>

@@ -1,15 +1,15 @@
-﻿"use client"
+﻿"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react"
-import Link from "next/link"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
+import Link from "next/link";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -17,8 +17,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { routes } from "@/constants/site-config"
+} from "@/components/ui/form";
+import { routes } from "@/constants/site-config";
 
 const loginSchema = z.object({
   email: z
@@ -154,10 +154,7 @@ export default function FormLogin() {
             disabled={isLoading}
           >
             {isLoading ? (
-              <div className="flex items-center">
-                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
-                Đang đăng nhập...
-              </div>
+              "Đang đăng nhập..."
             ) : (
               <>
                 <LogIn className="w-4 h-4 mr-2" />
@@ -179,5 +176,5 @@ export default function FormLogin() {
         </p>
       </div>
     </div>
-  )
+  );
 }

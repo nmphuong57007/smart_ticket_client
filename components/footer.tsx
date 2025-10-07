@@ -55,7 +55,6 @@ export default function Footer() {
                 alt="Smart Ticket Logo"
                 width={90}
                 height={90}
-                className="w-[90px] h-[90px]"
               />
               <div>
                 <h3 className="text-3xl font-bold text-primary leading-tight">
@@ -72,7 +71,7 @@ export default function Footer() {
                 <Link
                   key={social.label}
                   href={social.href}
-                  className="w-12 h-12 bg-muted text-muted-foreground rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110 shadow-md hover:shadow-lg"
+                  className="w-12 h-12 bg-muted text-muted-foreground rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
                   aria-label={social.label}
                 >
                   <social.icon className="w-6 h-6" />
@@ -89,7 +88,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-foreground hover:text-primary transition-colors duration-200 font-medium text-base"
+                    className="text-foreground hover:text-primary transition-colors font-medium"
                   >
                     {link.label}
                   </Link>
@@ -108,7 +107,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-foreground hover:text-primary transition-colors duration-200 font-medium text-base"
+                    className="text-foreground hover:text-primary transition-colors font-medium"
                   >
                     {link.label}
                   </Link>
@@ -125,7 +124,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-foreground hover:text-primary transition-colors duration-200 font-medium text-base"
+                    className="text-foreground hover:text-primary transition-colors font-medium"
                   >
                     {link.label}
                   </Link>
@@ -150,7 +149,7 @@ export default function Footer() {
                       href={`/cinemas/${location
                         .toLowerCase()
                         .replace(/\s+/g, "-")}`}
-                      className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium"
+                      className="text-muted-foreground hover:text-primary transition-colors font-medium"
                     >
                       {location}
                     </Link>
@@ -161,7 +160,7 @@ export default function Footer() {
             <div className="md:col-span-3">
               <Link
                 href={routes.cinemasSpecialScreenings}
-                className="text-foreground hover:text-primary transition-colors duration-200 font-medium text-lg"
+                className="text-foreground hover:text-primary transition-colors font-medium text-lg"
               >
                 Suất chiếu đặc biệt
               </Link>
@@ -174,13 +173,13 @@ export default function Footer() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2">
               <h5 className="font-bold mb-5 text-primary text-xl">LIÊN HỆ</h5>
-              <p className="text-base text-foreground mb-4 font-medium">
+              <p className="text-foreground mb-4 font-medium">
                 CÔNG TY CỔ PHẦN Smart Smart TICKET
               </p>
 
               <div className="flex items-center space-x-3 mb-3">
                 <Phone className="w-5 h-5 text-primary" />
-                <span className="text-base text-foreground">
+                <span className="text-foreground">
                   Hotline:{" "}
                   <a
                     href="tel:19006368007"
@@ -200,7 +199,7 @@ export default function Footer() {
 
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-primary" />
-                <span className="text-base text-foreground">
+                <span className="text-foreground">
                   Email:{" "}
                   <a
                     href="mailto:mkt@ticketcinemas.vn"
@@ -215,13 +214,13 @@ export default function Footer() {
             <div className="flex flex-col space-y-4 lg:items-end">
               <Link
                 href={routes.privacyPolicy}
-                className="text-base text-foreground hover:text-primary transition-colors duration-200 font-medium"
+                className="text-foreground hover:text-primary transition-colors font-medium"
               >
                 Chính sách bảo mật
               </Link>
               <Link
                 href={routes.faq}
-                className="text-base text-foreground hover:text-primary transition-colors duration-200 font-medium"
+                className="text-foreground hover:text-primary transition-colors font-medium"
               >
                 Hỏi đáp
               </Link>
@@ -230,8 +229,8 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-border text-center">
-          <p className="text-base text-muted-foreground font-medium">
+        <div className="mt-12 pt-8 border-t text-center">
+          <p className="text-muted-foreground font-medium">
             © 2025 SmartTicket. All rights reserved.
           </p>
         </div>
