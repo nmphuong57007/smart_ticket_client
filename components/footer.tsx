@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Facebook, Youtube, Instagram, Phone, Mail } from "lucide-react";
 
@@ -50,20 +49,13 @@ export default function Footer() {
           {/* Logo và Social Media */}
           <div className="space-y-8">
             <div className="flex items-center space-x-5">
-              <Image
+              <img
                 src="/smart_ticket.svg"
                 alt="Smart Ticket Logo"
                 width={90}
                 height={90}
+                className="w-[90px] h-[90px]"
               />
-              {/* <div>
-                <h3 className="text-3xl font-bold text-primary leading-tight">
-                  SMART
-                </h3>
-                <h3 className="text-3xl font-bold text-primary leading-tight">
-                  TICKET
-                </h3>
-              </div> */}
             </div>
 
             <div className="flex space-x-5">
