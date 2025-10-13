@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import ChatbotButton from "@/components/chatbot-button";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import QueryProvider from "@/providers/query-provider";
+import ToastProvider from "@/providers/toast-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,16 +32,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SpeedInsights />
-          {children}
-          <ChatbotButton />
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SpeedInsights />
+            {children}
+            <ChatbotButton />
+            <ToastProvider  />
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
