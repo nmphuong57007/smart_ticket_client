@@ -129,7 +129,7 @@ export default function CartDropdown() {
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-sm line-clamp-1">
+                      <h4 className="font-semibold text-sm truncate">
                         {item.movieTitle}
                       </h4>
                       <p className="text-xs text-muted-foreground mt-1">

@@ -19,6 +19,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { routes } from "@/constants/site-config";
+import { useLogin } from "@/hooks/use-auth";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { storage } from "@/lib/storage";
+import { useQueryClient } from "@tanstack/react-query";
+import { authKeys } from "@/hooks/use-auth";
 
 const loginSchema = z.object({
   email: z
@@ -35,7 +41,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function FormLogin() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -45,21 +52,40 @@ export default function FormLogin() {
     },
   });
 
+  const { mutateAsync: loginMutation, isPending } = useLogin({
+    onSuccess: (data) => {
+      // Lưu token và user info vào storage
+      storage.setItem("auth_token", data.data.token);
+      storage.setItem("user", JSON.stringify(data.data.user));
+      
+      // Invalidate và refresh auth queries
+      queryClient.invalidateQueries({ queryKey: authKeys.all });
+      
+      // Set user data vào cache
+      queryClient.setQueryData(authKeys.me(), data.data.user);
+      
+      toast.success(data.message || "Đăng nhập thành công!");
+      
+      // Redirect về trang chủ
+      router.push(routes.home);
+    },
+
+    onError: (error) => {
+      const errorMessage = error?.response?.data?.message || "Đăng nhập thất bại. Vui lòng thử lại.";
+      toast.error(errorMessage);
+    },
+  });
+
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
-    try {
-      // TODO: Implement login logic
-      console.log("Login data:", data);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    } catch (error) {
-      console.error("Login error:", error);
-    } finally {
-      setIsLoading(false);
-    }
+   loginMutation({
+      email: data.email,
+      password: data.password,
+      device_name: "web",
+   });
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full">
       <div className="text-center mb-8">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
           <LogIn className="w-8 h-8 text-primary" />
@@ -151,9 +177,9 @@ export default function FormLogin() {
           <Button
             type="submit"
             className="w-full h-11 text-base font-medium"
-            disabled={isLoading}
+            disabled={isPending}
           >
-            {isLoading ? (
+            {isPending ? (
               "Đang đăng nhập..."
             ) : (
               <>
