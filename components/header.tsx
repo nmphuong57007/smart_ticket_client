@@ -10,7 +10,10 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ModeToggle } from "./mode-toggle";
 import CartDropdown from "./cart-dropdown";
+import UserDropdown from "./user-dropdown";
+import ClientOnly from "./client-only";
 import { routes } from "../constants/site-config";
+import { useIsAuthenticated } from "@/hooks/use-auth";
 
 function LogoSmartTicket() {
   return (
@@ -41,6 +44,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
+  const isAuthenticated = useIsAuthenticated();
 
   // Đóng mobile menu khi chuyển trang
   useEffect(() => {
@@ -89,25 +93,52 @@ export default function Header() {
 
             <ModeToggle />
 
-            <div className="flex items-center space-x-3 ml-4">
-              <Button
-                variant="ghost"
-                size="default"
-                className="text-base font-medium"
-                asChild
-              >
-                <Link href={routes.login}>Đăng nhập</Link>
-              </Button>
-              <Button size="default" className="text-base font-medium" asChild>
-                <Link href={routes.register}>Đăng ký</Link>
-              </Button>
-            </div>
+            <ClientOnly
+              fallback={
+                <div className="flex items-center space-x-3 ml-4">
+                  <Button
+                    variant="ghost"
+                    size="default"
+                    className="text-base font-medium"
+                    asChild
+                  >
+                    <Link href={routes.login}>Đăng nhập</Link>
+                  </Button>
+                  <Button size="default" className="text-base font-medium" asChild>
+                    <Link href={routes.register}>Đăng ký</Link>
+                  </Button>
+                </div>
+              }
+            >
+              {isAuthenticated ? (
+                <div className="flex items-center space-x-3 ml-4">
+                  <UserDropdown />
+                </div>
+              ) : (
+                <div className="flex items-center space-x-3 ml-4">
+                  <Button
+                    variant="ghost"
+                    size="default"
+                    className="text-base font-medium"
+                    asChild
+                  >
+                    <Link href={routes.login}>Đăng nhập</Link>
+                  </Button>
+                  <Button size="default" className="text-base font-medium" asChild>
+                    <Link href={routes.register}>Đăng ký</Link>
+                  </Button>
+                </div>
+              )}
+            </ClientOnly>
           </div>
 
           {/* Mobile menu button */}
           <div className="lg:hidden flex items-center space-x-2">
             <CartDropdown />
             <ModeToggle />
+            <ClientOnly>
+              {isAuthenticated && <UserDropdown />}
+            </ClientOnly>
             <Button
               variant="outline"
               size="icon"
@@ -151,25 +182,51 @@ export default function Header() {
               ))}
 
               {/* Mobile Actions */}
-              <div className="pt-4 pb-2 border-t border-border mt-2">
-                <div className="flex space-x-3 px-3">
-                  <Button
-                    variant="outline"
-                    size="default"
-                    className="flex-1 text-base font-medium"
-                    asChild
-                  >
-                    <Link href={routes.login}>Đăng nhập</Link>
-                  </Button>
-                  <Button
-                    size="default"
-                    className="flex-1 text-base font-medium"
-                    asChild
-                  >
-                    <Link href={routes.register}>Đăng ký</Link>
-                  </Button>
-                </div>
-              </div>
+              <ClientOnly
+                fallback={
+                  <div className="pt-4 pb-2 border-t border-border mt-2">
+                    <div className="flex space-x-3 px-3">
+                      <Button
+                        variant="outline"
+                        size="default"
+                        className="flex-1 text-base font-medium"
+                        asChild
+                      >
+                        <Link href={routes.login}>Đăng nhập</Link>
+                      </Button>
+                      <Button
+                        size="default"
+                        className="flex-1 text-base font-medium"
+                        asChild
+                      >
+                        <Link href={routes.register}>Đăng ký</Link>
+                      </Button>
+                    </div>
+                  </div>
+                }
+              >
+                {!isAuthenticated && (
+                  <div className="pt-4 pb-2 border-t border-border mt-2">
+                    <div className="flex space-x-3 px-3">
+                      <Button
+                        variant="outline"
+                        size="default"
+                        className="flex-1 text-base font-medium"
+                        asChild
+                      >
+                        <Link href={routes.login}>Đăng nhập</Link>
+                      </Button>
+                      <Button
+                        size="default"
+                        className="flex-1 text-base font-medium"
+                        asChild
+                      >
+                        <Link href={routes.register}>Đăng ký</Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </ClientOnly>
             </div>
           </div>
         )}

@@ -21,6 +21,10 @@ import {
 import { routes } from "@/constants/site-config";
 import { useLogin } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { storage } from "@/lib/storage";
+import { useQueryClient } from "@tanstack/react-query";
+import { authKeys } from "@/hooks/use-auth";
 
 const loginSchema = z.object({
   email: z
@@ -37,6 +41,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function FormLogin() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -48,8 +54,20 @@ export default function FormLogin() {
 
   const { mutateAsync: loginMutation, isPending } = useLogin({
     onSuccess: (data) => {
+      // Lưu token và user info vào storage
+      storage.setItem("auth_token", data.data.token);
+      storage.setItem("user", JSON.stringify(data.data.user));
+      
+      // Invalidate và refresh auth queries
+      queryClient.invalidateQueries({ queryKey: authKeys.all });
+      
+      // Set user data vào cache
+      queryClient.setQueryData(authKeys.me(), data.data.user);
+      
       toast.success(data.message || "Đăng nhập thành công!");
-      form.reset();
+      
+      // Redirect về trang chủ
+      router.push(routes.home);
     },
 
     onError: (error) => {
