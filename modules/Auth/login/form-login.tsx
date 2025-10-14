@@ -57,31 +57,45 @@ export default function FormLogin() {
       // Lưu token và user info vào storage
       storage.setItem("auth_token", data.data.token);
       storage.setItem("user", JSON.stringify(data.data.user));
-      
+
       // Invalidate và refresh auth queries
       queryClient.invalidateQueries({ queryKey: authKeys.all });
-      
+
       // Set user data vào cache
       queryClient.setQueryData(authKeys.me(), data.data.user);
-      
+
       toast.success(data.message || "Đăng nhập thành công!");
-      
+
       // Redirect về trang chủ
       router.push(routes.home);
     },
 
     onError: (error) => {
-      const errorMessage = error?.response?.data?.message || "Đăng nhập thất bại. Vui lòng thử lại.";
-      toast.error(errorMessage);
+      if (error?.response?.data?.errors) {
+        Object.entries(error.response.data.errors).forEach(
+          ([field, messages]) => {
+            if (Array.isArray(messages) && messages.length > 0) {
+              form.setError(field as keyof LoginFormData, {
+                message: messages[0],
+              });
+            }
+          }
+        );
+      } else {
+        const errorMessage =
+          error?.response?.data?.message ||
+          "Đăng nhập thất bại. Vui lòng thử lại.";
+        toast.error(errorMessage);
+      }
     },
   });
 
   const onSubmit = async (data: LoginFormData) => {
-   loginMutation({
+    loginMutation({
       email: data.email,
       password: data.password,
       device_name: "web",
-   });
+    });
   };
 
   return (
@@ -168,9 +182,7 @@ export default function FormLogin() {
               </label>
             </div>
             <Link href={routes.forgotPassword}>
-              <Button variant="link" className="p-0 h-auto text-sm">
-                Quên mật khẩu?
-              </Button>
+              <p className="p-0 h-auto text-sm">Quên mật khẩu?</p>
             </Link>
           </div>
 

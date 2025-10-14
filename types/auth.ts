@@ -34,9 +34,9 @@ export interface RegisterRequest {
   email: string;
   password: string;
   password_confirmation: string;
-  phone: string;
-  address: string;
-  gender: string;
+  phone?: string | null;
+  address?: string | null;
+  gender?: string | null;
   device_name: string;
 }
 

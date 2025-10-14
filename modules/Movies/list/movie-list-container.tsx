@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { MovieCard } from "@/modules/Movies/movie-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -15,7 +16,14 @@ import {
 
 import { movieApi } from "@/services/movie.service";
 import type { Movie, MoviePagination, MoviesParams } from "@/types/movie";
-import { Search, Filter, Loader2 } from "lucide-react";
+import {
+  Search,
+  Filter,
+  Loader2,
+  ChevronDown,
+  ChevronUp,
+  X,
+} from "lucide-react";
 import {
   PaginationItem,
   PaginationPrevious,
@@ -50,6 +58,8 @@ export function MovieListContainer() {
   const [selectedGenre, setSelectedGenre] = useState(genreFilter);
   const [selectedSortBy, setSelectedSortBy] = useState(sortBy);
   const [selectedSortOrder, setSelectedSortOrder] = useState(sortOrder);
+  const [selectedPerPage, setSelectedPerPage] = useState(12);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Fetch movies
   const fetchMovies = async (params: MoviesParams, isFilter = false) => {
@@ -85,7 +95,7 @@ export function MovieListContainer() {
   useEffect(() => {
     const params: MoviesParams = {
       page: currentPage,
-      per_page: 12,
+      per_page: Number(searchParams.get("per_page")) || 12,
     };
 
     if (searchQuery) params.search = searchQuery;
@@ -98,7 +108,15 @@ export function MovieListContainer() {
     const isInitialLoad =
       !searchQuery && !statusFilter && !genreFilter && currentPage === 1;
     fetchMovies(params, !isInitialLoad);
-  }, [currentPage, searchQuery, statusFilter, genreFilter, sortBy, sortOrder]);
+  }, [
+    currentPage,
+    searchQuery,
+    statusFilter,
+    genreFilter,
+    sortBy,
+    sortOrder,
+    searchParams,
+  ]);
 
   // Update URL params
   const updateURLParams = (newParams: Record<string, string>) => {
@@ -128,6 +146,25 @@ export function MovieListContainer() {
       genre: selectedGenre,
       sort_by: selectedSortBy,
       sort_order: selectedSortOrder,
+      per_page: selectedPerPage.toString(),
+    });
+  };
+
+  // Handle clear filters
+  const handleClear = () => {
+    setSearchInput("");
+    setSelectedStatus("");
+    setSelectedGenre("");
+    setSelectedSortBy("title");
+    setSelectedSortOrder("asc");
+    setSelectedPerPage(12);
+    updateURLParams({
+      search: "",
+      status: "",
+      genre: "",
+      sort_by: "title",
+      sort_order: "asc",
+      per_page: "12",
     });
   };
 
@@ -274,63 +311,146 @@ export function MovieListContainer() {
         </p>
       </div>
 
+      {/* Toggle Filters */}
+      <div className="flex justify-start">
+        <Button
+          variant="outline"
+          onClick={() => setShowFilters(!showFilters)}
+          className="mb-4"
+        >
+          {showFilters ? (
+            <ChevronUp className="h-4 w-4 mr-2" />
+          ) : (
+            <ChevronDown className="h-4 w-4 mr-2" />
+          )}
+          {showFilters ? "Ẩn bộ lọc" : "Hiện bộ lọc"}
+        </Button>
+      </div>
+
       {/* Filters */}
-      <div className="bg-card p-6 rounded-lg border">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div className="lg:col-span-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+      {showFilters && (
+        <div className="bg-card p-6 rounded-lg border">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+            <div>
+              <Label className="text-sm font-medium">Tìm kiếm</Label>
+              <div className="relative mt-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Tìm kiếm phim..."
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  className="pl-10"
+                  onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                  disabled={filterLoading}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium">Thể loại</Label>
               <Input
-                placeholder="Tìm kiếm phim..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                className="pl-10"
-                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                placeholder="Thể loại..."
+                value={selectedGenre}
+                onChange={(e) => setSelectedGenre(e.target.value)}
+                className="mt-1"
                 disabled={filterLoading}
               />
             </div>
+
+            <div>
+              <Label className="text-sm font-medium">Trạng thái</Label>
+              <Select
+                value={selectedStatus || undefined}
+                onValueChange={setSelectedStatus}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Trạng thái" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="coming">Sắp chiếu</SelectItem>
+                  <SelectItem value="showing">Đang chiếu</SelectItem>
+                  <SelectItem value="stopped">Ngừng chiếu</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium">Sắp xếp theo</Label>
+              <Select value={selectedSortBy} onValueChange={setSelectedSortBy}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Sắp xếp theo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="id">ID</SelectItem>
+                  <SelectItem value="title">Tên phim</SelectItem>
+                  <SelectItem value="release_date">Ngày chiếu</SelectItem>
+                  <SelectItem value="duration">Thời lượng</SelectItem>
+                  <SelectItem value="created_at">Ngày tạo</SelectItem>
+                  <SelectItem value="status">Trạng thái</SelectItem>
+                  <SelectItem value="genre">Thể loại</SelectItem>
+                  <SelectItem value="format">Định dạng</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium">Thứ tự</Label>
+              <Select
+                value={selectedSortOrder}
+                onValueChange={(value) =>
+                  setSelectedSortOrder(value as "asc" | "desc")
+                }
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Thứ tự" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="asc">Tăng dần</SelectItem>
+                  <SelectItem value="desc">Giảm dần</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium">Số bản ghi</Label>
+              <Select
+                value={selectedPerPage.toString()}
+                onValueChange={(value) => setSelectedPerPage(Number(value))}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Số bản ghi" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="12">12</SelectItem>
+                  <SelectItem value="24">24</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
-          <Select
-            value={selectedStatus || undefined}
-            onValueChange={setSelectedStatus}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Trạng thái" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tất cả</SelectItem>
-              <SelectItem value="now-showing">Đang chiếu</SelectItem>
-              <SelectItem value="coming">Sắp chiếu</SelectItem>
-              <SelectItem value="special">Đặc biệt</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={selectedSortBy} onValueChange={setSelectedSortBy}>
-            <SelectTrigger>
-              <SelectValue placeholder="Sắp xếp theo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="title">Tên phim</SelectItem>
-              <SelectItem value="release_date">Ngày chiếu</SelectItem>
-              <SelectItem value="duration">Thời lượng</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Button
-            onClick={handleSearch}
-            className="w-full"
-            disabled={filterLoading}
-          >
-            {filterLoading ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <Filter className="h-4 w-4 mr-2" />
-            )}
-            {filterLoading ? "Đang lọc..." : "Lọc"}
-          </Button>
+          <div className="flex justify-start gap-2 mt-4">
+            <Button onClick={handleSearch} disabled={filterLoading}>
+              {filterLoading ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Filter className="h-4 w-4 mr-2" />
+              )}
+              {filterLoading ? "Đang lọc..." : "Lọc"}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleClear}
+              disabled={filterLoading}
+            >
+              <X className="h-4 w-4 mr-2" />
+              Xóa lọc
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Results info */}
       {pagination && (

@@ -27,35 +27,42 @@ import {
 import { routes } from "@/constants/site-config";
 import { useRegister } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const registerSchema = z.object({
   fullname: z
     .string()
     .min(1, "Họ tên là bắt buộc")
-    .min(2, "Họ tên phải có ít nhất 2 ký tự"),
+    .max(100, "Họ tên không được vượt quá 100 ký tự"),
   email: z
     .string()
     .min(1, "Email là bắt buộc")
-    .email("Vui lòng nhập email hợp lệ"),
+    .email("Vui lòng nhập email hợp lệ")
+    .max(100, "Email không được vượt quá 100 ký tự"),
   phone: z
     .string()
-    .min(1, "Số điện thoại là bắt buộc")
-    .regex(/^[0-9]{10}$/, "Số điện thoại phải có 10 chữ số"),
+    .max(20, "Số điện thoại không được vượt quá 20 ký tự")
+    .optional(),
   address: z
     .string()
-    .min(1, "Địa chỉ là bắt buộc"),
+    .max(255, "Địa chỉ không được vượt quá 255 ký tự")
+    .optional(),
   gender: z
-    .string()
-    .min(1, "Vui lòng chọn giới tính"),
+    .enum(["male", "female", "other", ""], {
+      message: "Giới tính không hợp lệ",
+    })
+    .optional(),
   password: z
     .string()
     .min(1, "Mật khẩu là bắt buộc")
-    .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+    .min(8, "Mật khẩu phải có ít nhất 8 ký tự"),
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function FormRegister() {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<RegisterFormData>({
@@ -74,11 +81,26 @@ export default function FormRegister() {
     onSuccess: (data) => {
       toast.success(data.message || "Đăng ký thành công!");
       form.reset();
+      router.push(routes.login);
     },
 
     onError: (error) => {
-      const errorMessage = error?.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại.";
-      toast.error(errorMessage);
+      if (error?.response?.data?.errors) {
+        Object.entries(error.response.data.errors).forEach(
+          ([field, messages]) => {
+            if (Array.isArray(messages) && messages.length > 0) {
+              form.setError(field as keyof RegisterFormData, {
+                message: messages[0],
+              });
+            }
+          }
+        );
+      } else {
+        const errorMessage =
+          error?.response?.data?.message ||
+          "Đăng ký thất bại. Vui lòng thử lại.";
+        toast.error(errorMessage);
+      }
     },
   });
 
@@ -86,9 +108,9 @@ export default function FormRegister() {
     registerMutation({
       fullname: data.fullname,
       email: data.email,
-      phone: data.phone,
-      address: data.address,
-      gender: data.gender,
+      phone: data.phone || null,
+      address: data.address || null,
+      gender: data.gender === "" ? null : data.gender,
       password: data.password,
       password_confirmation: data.password,
       device_name: "web",
@@ -208,7 +230,7 @@ export default function FormRegister() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Giới tính</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="h-11">
                       <SelectValue placeholder="Chọn giới tính" />

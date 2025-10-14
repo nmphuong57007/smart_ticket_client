@@ -35,7 +35,8 @@ export default function UserDropdown() {
 
       router.push(routes.login);
     },
-    onError: () => {
+
+    onError: (err) => {
       toast.error("Đăng xuất thất bại. Vui lòng thử lại.");
     },
   });

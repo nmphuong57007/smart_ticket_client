@@ -35,14 +35,14 @@ export default function RootLayout({
         <QueryProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >
             <SpeedInsights />
             {children}
             <ChatbotButton />
-            <ToastProvider  />
+            <ToastProvider />
           </ThemeProvider>
         </QueryProvider>
       </body>

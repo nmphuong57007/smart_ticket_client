@@ -8,7 +8,7 @@ export interface Movie {
   duration: number;
   format: string;
   release_date: string;
-  status: "coming" | "now-showing" | "special";
+  status: "coming" | "showing" | "stopped";
 }
 
 export interface MoviePagination {
@@ -31,10 +31,18 @@ export interface MoviesResponse {
 
 export interface MoviesParams {
   page?: number;
-  search?: string;
-  status?: "coming" | "now-showing" | "special";
-  genre?: string;
-  sort_by?: "title" | "release_date" | "duration";
-  sort_order?: "asc" | "desc";
   per_page?: number;
+  search?: string;
+  status?: "coming" | "showing" | "stopped";
+  genre?: string;
+  sort_by?:
+    | "id"
+    | "title"
+    | "release_date"
+    | "duration"
+    | "created_at"
+    | "status"
+    | "genre"
+    | "format";
+  sort_order?: "asc" | "desc";
 }

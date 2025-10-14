@@ -12,6 +12,7 @@ import {
 import { Clock, Calendar, Play } from "lucide-react";
 import type { Movie } from "@/types/movie";
 import { Badge } from "../../components/ui/badge";
+import { useState } from "react";
 
 interface MovieCardProps {
   movie: Movie;
@@ -20,34 +21,76 @@ interface MovieCardProps {
 }
 
 export function MovieCard({ movie, onBooking, onTrailer }: MovieCardProps) {
+  const [showTrailer, setShowTrailer] = useState(false);
+
   const statusLabels = {
     coming: "Sắp chiếu",
-    "now-showing": "Đang chiếu",
-    special: "Đặc biệt",
+    showing: "Đang chiếu",
+    stopped: "Ngừng chiếu",
   };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("vi-VN");
   };
 
+  const getYouTubeEmbedUrl = (url: string) => {
+    const match = url.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/
+    );
+    if (match) {
+      return `https://www.youtube.com/embed/${match[1]}?autoplay=1&mute=1&loop=1&playlist=${match[1]}&controls=0&modestbranding=1&rel=0`;
+    }
+    return null;
+  };
+
+  const embedUrl = movie.trailer ? getYouTubeEmbedUrl(movie.trailer) : null;
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+      <div
+        className="relative aspect-[3/4] overflow-hidden bg-muted"
+        onMouseEnter={() => setShowTrailer(true)}
+        onMouseLeave={() => setShowTrailer(false)}
+      >
         <img
           src={movie.poster}
           alt={movie.title}
-          className="absolute inset-0 w-full h-full object-cover"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity ${
+            showTrailer ? "opacity-0" : "opacity-100"
+          }`}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = "https://placehold.co/600x400";
           }}
         />
+        {embedUrl ? (
+          <iframe
+            src={showTrailer ? embedUrl : undefined}
+            className={`absolute inset-0 w-full h-full transition-opacity ${
+              showTrailer ? "opacity-100" : "opacity-0"
+            }`}
+            frameBorder="0"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
+        ) : movie.trailer ? (
+          <video
+            src={movie.trailer}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity ${
+              showTrailer ? "opacity-100" : "opacity-0"
+            }`}
+            autoPlay
+            muted
+            loop
+            preload="metadata"
+          />
+        ) : null}
         <div className="absolute top-2 left-2">
           <Badge
             variant={
               movie.status === "coming"
                 ? "default"
-                : movie.status === "now-showing"
+                : movie.status === "showing"
                 ? "secondary"
                 : "outline"
             }
@@ -98,7 +141,7 @@ export function MovieCard({ movie, onBooking, onTrailer }: MovieCardProps) {
             Trailer
           </Button>
         )}
-        {movie.status === "now-showing" && (
+        {movie.status === "showing" && (
           <Button
             size="sm"
             className="flex-1"
