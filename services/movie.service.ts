@@ -1,5 +1,5 @@
 import { api } from "@/lib/axios-intance";
-import type { Movie, MoviesResponse, MoviesParams } from "@/types/movie";
+import type { Movie, MoviesResponse, MoviesParams, MoviesDetailResponse } from "@/types/movie";
 
 export const movieApi = {
   // Lấy danh sách phim với phân trang
@@ -33,4 +33,10 @@ export const movieApi = {
       await api.get(`/movies/${id}`);
     return response;
   },
+};
+
+//lấy chi tiết (dành cho trang chi tiết)
+export const getMovieDetail = async (id: number) => {
+  const res = await api.get<MoviesDetailResponse>(`/movies/${id}`);
+  return res.data;
 };

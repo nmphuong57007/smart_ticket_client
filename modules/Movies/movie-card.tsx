@@ -14,6 +14,8 @@ import type { Movie } from "@/types/movie";
 import { Badge } from "../../components/ui/badge";
 import { useState } from "react";
 
+import { useRouter } from "next/navigation";
+import {routes} from"@/constants/site-config";
 interface MovieCardProps {
   movie: Movie;
   onBooking?: (movieId: number) => void;
@@ -21,8 +23,12 @@ interface MovieCardProps {
 }
 
 export function MovieCard({ movie, onBooking, onTrailer }: MovieCardProps) {
-  const [showTrailer, setShowTrailer] = useState(false);
 
+ const router = useRouter();  
+  const [showTrailer, setShowTrailer] = useState(false);
+  const handlerRedirectDetail = (movieId:number) =>{
+    router.push(routes.movieDetail(movieId));
+  }
   const statusLabels = {
     coming: "Sắp chiếu",
     showing: "Đang chiếu",
@@ -46,8 +52,10 @@ export function MovieCard({ movie, onBooking, onTrailer }: MovieCardProps) {
   const embedUrl = movie.trailer ? getYouTubeEmbedUrl(movie.trailer) : null;
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow"
+    onClick = {()=>handlerRedirectDetail(movie.id)} 
+    >
+      <div 
         className="relative aspect-[3/4] overflow-hidden bg-muted"
         onMouseEnter={() => setShowTrailer(true)}
         onMouseLeave={() => setShowTrailer(false)}

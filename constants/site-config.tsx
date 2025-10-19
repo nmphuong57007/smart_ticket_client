@@ -1,3 +1,5 @@
+import { id } from "date-fns/locale";
+
 export const routes = {
   home: "/home",
   login: "/login",
@@ -16,4 +18,6 @@ export const routes = {
   cinemasSpecialScreenings: "/cinemas/special-screenings",
   cart: "/cart",
   checkout: "/checkout",
+movieDetail: (id:number | string) => `/movies/detail/${id}`,
+
 };

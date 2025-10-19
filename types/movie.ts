@@ -1,3 +1,5 @@
+import { number, string } from "zod";
+
 export interface Movie {
   id: number;
   title: string;
@@ -46,3 +48,23 @@ export interface MoviesParams {
     | "format";
   sort_order?: "asc" | "desc";
 }
+
+export interface MoviesDetailResponse {
+  success: boolean;
+  message: string;
+  data: {
+      id: number;
+      title: string;
+      poster: string;
+      trailer: string;
+      description: string;
+      genre: string;
+      duration: number;
+      format: string;
+      release_date: string;
+      status: string;
+      created_at: string;
+  };
+}
+
+
