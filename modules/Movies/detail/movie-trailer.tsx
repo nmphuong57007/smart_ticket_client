@@ -49,14 +49,14 @@ export const TrailerPopup: React.FC<MovieTrailerPopupProps> = ({
       {/* Nút mở trailer */}
       <button
         onClick={openModal}
-        className="text-blue-600 hover:underline text-3xl font-semibold"
+        className="flex-1 w-1/2 border-2 border-black rounded-lg py-0.5"
       >
         {label}
       </button>
 
       {/* Popup */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" style={{ marginBottom: 0 }}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"  style={{ marginBottom: "0px" }}
         onClick={close}>
           <div className="relative p-4"
           onClick={(e) => e.stopPropagation()} // tránh tắt khi click trong video >
@@ -74,5 +74,8 @@ export const TrailerPopup: React.FC<MovieTrailerPopupProps> = ({
     </>
   );
 };
+
+
+
 
 

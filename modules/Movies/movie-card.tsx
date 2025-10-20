@@ -9,20 +9,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Clock, Calendar, Play } from "lucide-react";
+import { Clock, Calendar } from "lucide-react";
 import type { Movie } from "@/types/movie";
 import { Badge } from "../../components/ui/badge";
 import { useState } from "react";
-
+import { TrailerPopup } from "./detail/movie-trailer";
 import { useRouter } from "next/navigation";
 import {routes} from"@/constants/site-config";
 interface MovieCardProps {
   movie: Movie;
   onBooking?: (movieId: number) => void;
-  onTrailer?: (trailerUrl: string) => void;
 }
 
-export function MovieCard({ movie, onBooking, onTrailer }: MovieCardProps) {
+export function MovieCard({ movie, onBooking }: MovieCardProps) {
 
  const router = useRouter();  
   const [showTrailer, setShowTrailer] = useState(false);
@@ -53,7 +52,7 @@ export function MovieCard({ movie, onBooking, onTrailer }: MovieCardProps) {
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow"
-    onClick = {()=>handlerRedirectDetail(movie.id)} 
+    
     >
       <div 
         className="relative aspect-[3/4] overflow-hidden bg-muted"
@@ -93,7 +92,7 @@ export function MovieCard({ movie, onBooking, onTrailer }: MovieCardProps) {
             preload="metadata"
           />
         ) : null}
-        <div className="absolute top-2 left-2">
+        <div className="absolute top-2 left-2" onClick = {()=>handlerRedirectDetail(movie.id)} >
           <Badge
             variant={
               movie.status === "coming"
@@ -107,21 +106,23 @@ export function MovieCard({ movie, onBooking, onTrailer }: MovieCardProps) {
           </Badge>
         </div>
         {movie.format && (
-          <div className="absolute top-2 right-2">
+          <div className="absolute top-2 right-2" onClick = {()=>handlerRedirectDetail(movie.id)} >
             <Badge variant="secondary">{movie.format}</Badge>
           </div>
         )}
       </div>
 
       <CardHeader className="p-4">
-        <CardTitle className="text-lg truncate">{movie.title}</CardTitle>
-        <CardDescription className="truncate">
+        <CardTitle className="text-lg truncate" onClick = {()=>handlerRedirectDetail(movie.id)}>
+          {movie.title}
+          </CardTitle>
+        <CardDescription className="truncate" onClick = {()=>handlerRedirectDetail(movie.id)}>
           {movie.description}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="p-4 pt-0">
-        <div className="space-y-2 text-sm text-muted-foreground">
+        <div className="space-y-2 text-sm text-muted-foreground" onClick = {()=>handlerRedirectDetail(movie.id)} >
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
             <span>{formatDate(movie.release_date)}</span>
@@ -138,17 +139,7 @@ export function MovieCard({ movie, onBooking, onTrailer }: MovieCardProps) {
       </CardContent>
 
       <CardFooter className="p-4 pt-0 flex gap-2">
-        {movie.trailer && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex-1"
-            onClick={() => onTrailer?.(movie.trailer)}
-          >
-            <Play className="h-4 w-4 mr-2" />
-            Trailer
-          </Button>
-        )}
+         {movie.trailer && <TrailerPopup trailerUrl={movie.trailer} label="Trailer"/>}
         {movie.status === "showing" && (
           <Button
             size="sm"
