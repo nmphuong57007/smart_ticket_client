@@ -1,3 +1,4 @@
+"use client";
 import { MoviesDetailResponse } from "@/types/movie";
 
 interface MoviePosterProps {

@@ -4,8 +4,8 @@ import MovieDetailContainer from "@/modules/Movies/detail/movie-detail-container
 export default async function MovieDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise <{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = await params;
   return <MovieDetailContainer id={id}  />;
 }
