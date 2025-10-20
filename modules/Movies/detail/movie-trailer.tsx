@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import { X } from "lucide-react";
 import { useTrailerModal } from "@/hooks/use-movie-detail";
 
@@ -10,7 +11,7 @@ interface MovieTrailerPopupProps {
 export const TrailerEmbed: React.FC<{ src?: string }> = ({ src }) => {
   if (!src) return null;
   return (
-    <div className="w-[900px] h-[500px]">
+    <div className="w-[80vw] max-w-[1200px] aspect-video">
       <iframe
         src={src}
         title="Trailer"
@@ -28,6 +29,21 @@ export const TrailerPopup: React.FC<MovieTrailerPopupProps> = ({
 }) => {
   const { open, src, openModal, close } = useTrailerModal(trailerUrl);
 
+  //  Chặn scroll nền khi mở popup
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+      document.documentElement.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+      document.documentElement.style.overflow = "auto";
+    };
+  }, [open]);
+
   return (
     <>
       {/* Nút mở trailer */}
@@ -40,8 +56,11 @@ export const TrailerPopup: React.FC<MovieTrailerPopupProps> = ({
 
       {/* Popup */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-          <div className="relative p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" style={{ marginBottom: 0 }}
+        onClick={close}>
+          <div className="relative p-4"
+          onClick={(e) => e.stopPropagation()} // tránh tắt khi click trong video >
+          >
             <button
               onClick={close}
               className="absolute -top-3 -right-3 bg-white text-black rounded-full p-2 shadow hover:bg-gray-200"
@@ -55,3 +74,5 @@ export const TrailerPopup: React.FC<MovieTrailerPopupProps> = ({
     </>
   );
 };
+
+
