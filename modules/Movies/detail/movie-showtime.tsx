@@ -1,23 +1,61 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useMovieShowtimeDetail } from "@/hooks/use-movie-detail";
+import { useMovieDetail } from "@/hooks/use-movie-detail";
 
 export default function MovieShowtimeDetail({ movieId }: { movieId: number }) {
-  const { data, isLoading, isError } = useMovieShowtimeDetail(movieId);
+  const { data: movieData, isLoading: movieLoading, isError: movieError } = useMovieDetail(movieId);
+  const { data: showtimeData, isLoading, isError } = useMovieShowtimeDetail(movieId);
+  console.log("Showtime Data:", showtimeData);
+
 
   // Lấy ngày đầu tiên có lịch chiếu
-  const firstDate = useMemo(() => data?.full_showtimes?.[0]?.date, [data]);
+  const firstDate = useMemo(() => showtimeData?.full_showtimes?.[0]?.date, [showtimeData]);
   const [selectedDate, setSelectedDate] = useState<string | undefined>(firstDate);
 
   // Khi có data mà selectedDate chưa có → set ngay, tránh nhấp nháy
-  if (!selectedDate && firstDate) setSelectedDate(firstDate);
+  useEffect(() => {
+    if (!selectedDate && firstDate) setSelectedDate(firstDate);
+  }, [firstDate, selectedDate]);
 
-  if (isLoading) return <p>Đang tải lịch chiếu...</p>;
-  if (isError) return <p>Không thể tải dữ liệu lịch chiếu</p>;
-  if (!data) return <p>Không có dữ liệu lịch chiếu</p>;
+  if (movieLoading || isLoading) return <p>Đang tải lịch chiếu...</p>;
+  if (movieError || isError) return <p>Không thể tải dữ liệu lịch chiếu</p>;
+  if (!movieData) return <p>Không có dữ liệu lịch chiếu</p>;
 
-  const selectedDay = data.full_showtimes.find((d) => d.date === selectedDate);
+  const selectedDay = showtimeData?.full_showtimes?.find((d) => d.date === selectedDate);
+
+  // Kiểm tra trạng thái phim
+  if (movieData.status === "coming") {
+    return (
+      <div>
+        <h2 className="text-2xl font-bold mb-2">{movieData.title}</h2>
+        <p className="text-gray-500 italic mb-3">
+          Phim dự kiến khởi chiếu vào {movieData.release_date}
+        </p>
+        <p>Hiện tại chưa có lịch chiếu cho phim này.</p>
+      </div>
+    );
+  }
+
+  if (movieData.status === "stopped") {
+    return (
+      <div>
+        <h2 className="text-2xl font-bold mb-2">{movieData.title}</h2>
+        <p className="text-gray-500 italic">Phim đã ngừng chiếu.</p>
+      </div>
+    );
+  }
+
+  // Nếu không có lịch chiếu
+  if (!showtimeData?.full_showtimes?.length) {
+    return (
+      <div>
+        <h2 className="text-2xl font-bold mb-2">{movieData.title}</h2>
+        <p>Hiện tại chưa có lịch chiếu.</p>
+      </div>
+    );
+  }
 
   // Gom nhóm theo loại ngôn ngữ
   const groupedShowtimes = selectedDay
@@ -52,7 +90,7 @@ export default function MovieShowtimeDetail({ movieId }: { movieId: number }) {
 
       {/* Danh sách ngày */}
       <div className="flex gap-4 mb-4 border-b pb-2">
-        {data.full_showtimes.map((day) => (
+        {showtimeData.full_showtimes.map((day) => (
           <button
             key={day.date}
             onClick={() => setSelectedDate(day.date)}
