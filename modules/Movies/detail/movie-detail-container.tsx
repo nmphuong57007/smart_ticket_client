@@ -3,6 +3,7 @@
 import { useMovieDetail } from "@/hooks/use-movie-detail";
 import MovieInformation from "./movie-information";
 import MoviePoster from "./movie-poster";
+import MovieShowtimeDetail from "./movie-showtime";
 
 interface MovieDetailContainerProp {
     id:string;
@@ -18,17 +19,24 @@ export default function MovieDetailContainer({
     
     return( 
     <div className="max-w-6xl mx-auto px-6 py-10">
-        
-        {/**ảnh */}
-        <div className="flex flex-col md:flex-row gap-x-[100px]">
-            <div className="w-[400px] h-[600px] ">
-                <MoviePoster data = {data}/>
+  
+        {/** poster + thông tin phim ngang nhau */}
+        <div className="flex flex-col md:flex-row gap-x-[100px] mb-10">
+            <div className="w-[400px] h-[600px] flex-shrink-0">
+            <MoviePoster data={data} />
             </div>
-                {/**nội dung */}
+            
             <div className="w-full md:w-1/2">
-                <MovieInformation  data = {data || []} isLoading={isLoading}/>
+            <MovieInformation data={data || []} isLoading={isLoading} />
             </div>
         </div>
-    </div>
+
+        {/** showtime detail nằm dưới poster + nội dung */}
+        <div>
+            <MovieShowtimeDetail movieId={Number(id)} />
+        </div>
+
+        </div>
+
     );
 }

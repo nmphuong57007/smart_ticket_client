@@ -1,5 +1,5 @@
 import { api } from "@/lib/axios-intance";
-import type { Movie, MoviesResponse, MoviesParams, MoviesDetailResponse } from "@/types/movie";
+import type { Movie, MoviesResponse, MoviesParams, MoviesDetailResponse, MoviesShowtimeDetailResponse } from "@/types/movie";
 
 export const movieApi = {
   // Lấy danh sách phim với phân trang
@@ -40,3 +40,24 @@ export const getMovieDetail = async (id: number) => {
   const res = await api.get<MoviesDetailResponse>(`/movies/${id}`);
   return res.data;
 };
+
+//lấy chi tiết lịch chiếu (dành cho trang chi tiết)
+// lấy chi tiết lịch chiếu (dành cho trang chi tiết)
+export const getMovieShowtimeDetail = async (
+  id: number,
+  date?: string,
+  cinemaId?: number
+) => {
+  const params: Record<string, any> = {};
+
+  if (date) params.date = date;
+  if (cinemaId) params.cinema_id = cinemaId;
+
+  const res = await api.get<MoviesShowtimeDetailResponse>(
+    `/showtimes/movie/${id}/full`,
+    { params }
+  );
+
+  return res.data;
+};
+

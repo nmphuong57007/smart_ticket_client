@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getMovieDetail } from "@/services/movie.service";
 import { useEffect, useState } from "react";
 import { convertToEmbed } from "@/components/utils/convertToEmbed";
+import { MoviesShowtimeDetailResponse } from "@/types/movie";
+import { getMovieShowtimeDetail } from "@/services/movie.service";
 
 /* ---------------------------- MOVIE DETAIL QUERY ---------------------------- */
 
@@ -49,3 +51,26 @@ export function useTrailerModal(trailerUrl?: string): UseTrailerModal {
 
   return { open, src, openModal, close };
 }
+
+/**
+ * Hook lấy chi tiết lịch chiếu phim (dành cho trang chi tiết)
+ * Có thể refetch khi đổi ngày hoặc rạp
+ */
+
+
+export const useMovieShowtimeDetail = (
+  id: number,
+  date?: string,
+  cinemaId?: number
+) => {
+  return useQuery<MoviesShowtimeDetailResponse>({
+    queryKey: ["movieShowtimeDetail", id, date, cinemaId],
+    queryFn: () => getMovieShowtimeDetail(id, date, cinemaId),
+    enabled: !!id, // chỉ gọi API khi có id
+    staleTime: 1000 * 60, // dữ liệu cache 1 phút
+    retry: 1, // thử lại 1 lần nếu lỗi
+  });
+};
+
+
+

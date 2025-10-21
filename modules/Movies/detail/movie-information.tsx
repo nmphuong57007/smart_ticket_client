@@ -40,38 +40,6 @@ export default function MovieInformation({data, isLoading}:MovieInformationProps
 
       {/* Trailer */}
       <TrailerPopup trailerUrl={data?.trailer} label="Trailer" />
-
-
-
-      {/* Lịch chiếu */}
-      <div className="mt-6">
-        <h3 className="font-semibold text-lg mb-2 text-3xl">Lịch chiếu</h3>
-        <div className="flex gap-3 mb-3">
-          {["12/10", "13/10", "14/10"].map((d) => (
-            <button
-              key={d}
-              className={`px-3 py-1 rounded-md border ${
-                d === "12/10"
-                  ? "bg-yellow-400 text-white border-yellow-500"
-                  : "border-gray-300 text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              {d}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {["13:00", "14:00", "15:00", "16:00"].map((t) => (
-            <button
-              key={t}
-              className="border rounded-md py-2 text-sm hover:bg-gray-100"
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
     </div>
 }
