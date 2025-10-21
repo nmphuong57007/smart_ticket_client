@@ -6,6 +6,17 @@ import { useMemo } from "react";
 
 interface MovieInformationProps extends MoviesDetailResponse{
     isLoading: boolean;    
+     id: number;
+      title: string;
+      poster: string;
+      trailer: string;
+      description: string;
+      genre: string;
+      duration: number;
+      format: string;
+      release_date: string;
+      status: string;
+      created_at: string;
 }
 
 export default function MovieInformation({data, isLoading}:MovieInformationProps){
