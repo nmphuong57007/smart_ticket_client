@@ -36,7 +36,7 @@ export default function MovieDetailContainer({
             <MovieShowtimeDetail movieId={Number(id)} />
         </div>
 
-        </div>
+    </div>
 
     );
 }

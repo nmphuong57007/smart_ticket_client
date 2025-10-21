@@ -18,6 +18,7 @@ export function useMovieDetail(id: number | string) {
     queryKey: movieDetailKeys.detail(id),
     queryFn: () => getMovieDetail(id as number),
     enabled: !!id,
+    staleTime: 1000 * 60 * 5, // 5 phút: data tươi, quay lại không fetch
   });
 }
 
