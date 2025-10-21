@@ -27,7 +27,10 @@ export default function MovieDetailContainer({
             </div>
             
             <div className="w-full md:w-1/2">
-            <MovieInformation data={data || []} isLoading={isLoading} />
+            {data && (
+                <MovieInformation data={data} isLoading={isLoading} />
+                )}
+
             </div>
         </div>
 

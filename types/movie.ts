@@ -82,8 +82,8 @@ export interface MoviesShowtimeDetailResponse {
         room: string;
         available_seats: number;
         total_seats: number;
-      }[];
-    }[];
+      };
+    };
   };
 }
 
