@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import ComboCard from "@/components/combo-card";
+import ComboCard from "@/modules/Combos/combo-card";
 import { fetchCombos } from "@/services/combo.service";
 import { Combo } from "@/types/combo";
 import { Button } from "@/components/ui/button";
