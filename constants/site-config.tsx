@@ -16,4 +16,5 @@ export const routes = {
   cinemasSpecialScreenings: "/cinemas/special-screenings",
   cart: "/cart",
   checkout: "/checkout",
+  combos: "/combos",
 };
