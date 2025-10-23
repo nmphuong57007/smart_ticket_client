@@ -18,6 +18,6 @@ export const routes = {
   cinemasSpecialScreenings: "/cinemas/special-screenings",
   cart: "/cart",
   checkout: "/checkout",
-movieDetail: (id:number | string) => `/movies/detail/${id}`,
-
+  movieDetail: (id:number | string) => `/movies/detail/${id}`,
+  combos: "/combos",
 };

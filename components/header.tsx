@@ -35,6 +35,7 @@ const navigationItems = [
   { label: "Trang chủ", href: routes.home },
   { label: "Phim", href: routes.movies },
   { label: "Rạp", href: routes.cinemas },
+  { label: "Combo", href: routes.combos }
 ];
 
 export default function Header() {
