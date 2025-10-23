@@ -1,3 +1,5 @@
+import { number, string } from "zod";
+
 export interface Movie {
   id: number;
   title: string;
@@ -46,3 +48,46 @@ export interface MoviesParams {
     | "format";
   sort_order?: "asc" | "desc";
 }
+
+export interface MoviesDetailResponse {
+  success: boolean;
+  message: string;
+  data: {
+      id: number;
+      title: string;
+      poster: string;
+      trailer: string;
+      description: string;
+      genre: string;
+      duration: number;
+      format: string;
+      release_date: string;
+      status: string;
+      created_at: string;
+  };
+}
+export interface MoviesShowtimeDetailResponse {
+  success: boolean;
+  message: string;
+  data: {
+    movie_id: number;
+    movie_title: string;
+    poster: string;
+    full_showtimes: {   //mảng chứa các ngày chiếu
+      date: string;
+      showtimes: {     //danh sách các suất chiếu trong ngày,
+        time: string;
+        format: string;
+        language_type: string;
+        room: string;
+        available_seats: number;
+        total_seats: number;
+      };
+    };
+  };
+}
+
+
+
+
+
