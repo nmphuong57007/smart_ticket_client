@@ -1,9 +1,8 @@
 import { api } from "@/lib/axios-intance";
-import type { Movie, MoviesResponse, MoviesParams, MoviesDetailResponse, MoviesShowtimeDetailResponse } from "@/types/movie";
 
 export const movieApi = {
   // Lấy danh sách phim với phân trang
-  getMovies: async (params?: MoviesParams): Promise<MoviesResponse> => {
+  getMovies: async (params?: any): Promise<any> => {
     const searchParams = new URLSearchParams();
 
     if (params?.page) searchParams.append("page", params.page.toString());
@@ -21,43 +20,39 @@ export const movieApi = {
       ? `/movies/list?${queryString}`
       : "/movies/list";
 
-    const response: MoviesResponse = await api.get(endpoint);
+    const response = await api.get(endpoint);
+
     return response;
   },
 
   // Lấy chi tiết phim
-  getMovieById: async (
-    id: number
-  ): Promise<{ success: boolean; message: string; data: Movie }> => {
-    const response: { success: boolean; message: string; data: Movie } =
-      await api.get(`/movies/${id}`);
+  getMovieById: async (id: any): Promise<any> => {
+    const response = await api.get(`/movies/${id}`);
     return response;
   },
 };
 
 //lấy chi tiết (dành cho trang chi tiết)
-export const getMovieDetail = async (id: number) => {
-  const res = await api.get<MoviesDetailResponse>(`/movies/${id}`);
+export const getMovieDetail = async (id: any) => {
+  const res = await api.get(`/movies/${id}`);
   return res.data;
 };
 
 //lấy chi tiết lịch chiếu (dành cho trang chi tiết)
-// lấy chi tiết lịch chiếu (dành cho trang chi tiết)
 export const getMovieShowtimeDetail = async (
-  id: number,
-  date?: string,
-  cinemaId?: number
+  id: any,
+  date?: any,
+  cinemaId?: any
 ) => {
   const params: Record<string, any> = {};
 
   if (date) params.date = date;
   if (cinemaId) params.cinema_id = cinemaId;
 
-  const res = await api.get<MoviesShowtimeDetailResponse>(
+  const res = await api.get(
     `/showtimes/movie/${id}/full`,
     { params }
   );
 
   return res.data;
 };
-

@@ -1,10 +1,10 @@
 export interface Combo {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
-  image: string;
-  stock: number;
-  type: string;
-  is_active: boolean;
+  id: any;
+  name: any;
+  price: any;
+  description: any;
+  image: any;
+  stock: any;
+  type: any;
+  is_active: any;
 }
