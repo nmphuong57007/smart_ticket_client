@@ -1,19 +1,13 @@
 import { api } from "@/lib/axios-intance";
-import type {
-  LoginRequest,
-  LoginResponse,
-  RegisterRequest,
-  RegisterResponse,
-} from "@/types/auth";
 
 export const authApi = {
   // Đăng nhập
-  login: async (data: LoginRequest): Promise<LoginResponse> => {
+  login: async (data: any): Promise<any> => {
     return api.post("/auth/login", data);
   },
 
   // Đăng xuất
-  logout: async (): Promise<{ success: boolean; message: string }> => {
+  logout: async (): Promise<any> => {
     return api.post("/auth/logout");
   },
 
@@ -23,22 +17,17 @@ export const authApi = {
   },
 
   // Đăng ký
-  register: async (data: RegisterRequest): Promise<RegisterResponse> => {
+  register: async (data: any): Promise<any> => {
     return api.post("/auth/register", data);
   },
 
   // Quên mật khẩu
-  forgotPassword: async (email: string) => {
+  forgotPassword: async (email: any) => {
     return api.post("/auth/forgot-password", { email });
   },
 
   // Reset mật khẩu
-  resetPassword: async (data: {
-    token: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
-  }) => {
+  resetPassword: async (data: any) => {
     return api.post("/auth/reset-password", data);
   },
 };

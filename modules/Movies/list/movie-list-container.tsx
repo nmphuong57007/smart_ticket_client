@@ -178,11 +178,6 @@ export function MovieListContainer() {
     router.push(`/booking/${movieId}`);
   };
 
-  // Handle trailer
-  const handleTrailer = (trailerUrl: string) => {
-    window.open(trailerUrl, "_blank");
-  };
-
   // Generate pagination items
   const generatePaginationItems = () => {
     if (!pagination) return [];
@@ -207,7 +202,7 @@ export function MovieListContainer() {
     // Page numbers
     const showPages = 5;
     let startPage = Math.max(1, current_page - Math.floor(showPages / 2));
-    let endPage = Math.min(last_page, startPage + showPages - 1);
+    const endPage = Math.min(last_page, startPage + showPages - 1);
 
     if (endPage - startPage + 1 < showPages) {
       startPage = Math.max(1, endPage - showPages + 1);
@@ -489,7 +484,6 @@ export function MovieListContainer() {
                 key={movie.id}
                 movie={movie}
                 onBooking={handleBooking}
-                onTrailer={handleTrailer}
               />
             ))}
           </div>

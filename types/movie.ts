@@ -1,48 +1,70 @@
+export type MovieStatus = 'coming' | 'showing' | 'stopped';
+
 export interface Movie {
   id: number;
   title: string;
   poster: string;
-  trailer: string;
+  trailer: string | null;
   description: string;
   genre: string;
   duration: number;
-  format: string;
+  format: string | null;
   release_date: string;
-  status: "coming" | "showing" | "stopped";
+  status: MovieStatus;
 }
 
 export interface MoviePagination {
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-  from: number;
-  to: number;
+  current_page: any;
+  last_page: any;
+  per_page: any;
+  total: any;
+  from: any;
+  to: any;
 }
 
 export interface MoviesResponse {
-  success: boolean;
-  message: string;
-  data: {
-    movies: Movie[];
-    pagination: MoviePagination;
-  };
+  success: any;
+  message: any;
+  data: any;
 }
 
 export interface MoviesParams {
-  page?: number;
-  per_page?: number;
-  search?: string;
-  status?: "coming" | "showing" | "stopped";
-  genre?: string;
-  sort_by?:
-    | "id"
-    | "title"
-    | "release_date"
-    | "duration"
-    | "created_at"
-    | "status"
-    | "genre"
-    | "format";
-  sort_order?: "asc" | "desc";
+  page?: any;
+  per_page?: any;
+  search?: any;
+  status?: any;
+  genre?: any;
+  sort_by?: any;
+  sort_order?: any;
 }
+
+export interface MoviesDetailResponse {
+  success: any;
+  message: any;
+  data: any;
+}
+
+export interface Showtime {
+  time: any;
+  format: any;
+  language_type: any;
+  room: any;
+  available_seats: any;
+  total_seats: any;
+}
+
+export interface ShowtimeDay {
+  date: any;
+  showtimes: any;
+}
+
+export interface MoviesShowtimeDetailResponse {
+  success: any;
+  message: any;
+  data: any;
+}
+
+
+
+
+

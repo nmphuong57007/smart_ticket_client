@@ -1,53 +1,50 @@
-// Auth related types
+// Auth related types with any type
 export interface User {
-  id: number;
-  fullname: string;
-  avatar: string | null;
-  email: string;
-  phone: string;
-  address: string | null;
-  gender: string | null;
-  role: string;
-  points: number;
-  status: string;
-  created_at: string;
-  updated_at: string;
+  id: any;
+  fullname: any;
+  avatar: any;
+  email: any;
+  phone: any;
+  address: any;
+  gender: any;
+  role: any;
+  points: any;
+  status: any;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface LoginRequest {
-  email: string;
-  password: string;
-  device_name: string;
+  email: any;
+  password: any;
+  device_name: any;
 }
 
 export interface LoginResponse {
-  success: boolean;
-  message: string;
-  data: {
-    user: User;
-    token: string;
-  };
+  success: any;
+  message: any;
+  data: any;
 }
 
 export interface RegisterRequest {
-  fullname: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-  phone?: string | null;
-  address?: string | null;
-  gender?: string | null;
-  device_name: string;
+  fullname: any;
+  email: any;
+  password: any;
+  password_confirmation: any;
+  phone?: any;
+  address?: any;
+  gender?: any;
+  device_name: any;
 }
 
 export interface RegisterResponse {
-  success: boolean;
-  message: string;
+  success: any;
+  message: any;
   data?: any;
 }
 
 export interface AuthError {
-  success: false;
-  message: string;
-  errors?: Record<string, string[]>;
+  success: any;
+  message: any;
+  errors?: any;
 }

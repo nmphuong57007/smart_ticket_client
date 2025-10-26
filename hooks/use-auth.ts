@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { authApi } from "@/services/auth.service";
 import { storage } from "@/lib/storage";
-import type { LoginRequest, User, RegisterRequest } from "@/types/auth";
-import { routes } from "@/constants/site-config";
-import { toast } from "sonner";
 
 // Query keys
 export const authKeys = {
@@ -27,7 +24,7 @@ export function useLogin(options?: {
   onError?: (error: any) => void;
 }) {
   return useMutation({
-    mutationFn: (data: LoginRequest) => authApi.login(data),
+    mutationFn: (data: any) => authApi.login(data),
     onSuccess: options?.onSuccess,
     onError: options?.onError,
   });
@@ -51,7 +48,7 @@ export function useRegister(options?: {
   onError?: (error: any) => void;
 }) {
   return useMutation({
-    mutationFn: (data: RegisterRequest) => authApi.register(data),
+    mutationFn: (data: any) => authApi.register(data),
     onSuccess: options?.onSuccess,
     onError: options?.onError,
   });
@@ -78,8 +75,8 @@ export function useIsAuthenticated(): boolean {
 }
 
 // Utility function để lấy user từ storage
-export function useAuthUser(): User | null {
-  const [user, setUser] = useState<User | null>(null);
+export function useAuthUser(): any {
+  const [user, setUser] = useState<any>(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -87,7 +84,7 @@ export function useAuthUser(): User | null {
     const userString = storage.getItem("user");
     if (userString) {
       try {
-        setUser(JSON.parse(userString) as User);
+        setUser(JSON.parse(userString));
       } catch {
         setUser(null);
       }
