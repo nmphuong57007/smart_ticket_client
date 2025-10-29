@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       {
@@ -15,6 +14,16 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "picsum.photos", 
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000", // nếu server của bạn chạy port 8000
+        pathname: "/storage/**", // ** để match tất cả file trong storage
       },
     ],
   },
