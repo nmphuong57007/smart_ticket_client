@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,6 +45,10 @@ export default function UserDropdown() {
     logoutMutation();
   };
 
+  const goToProfile = () => {
+    router.push(routes.profile);
+  }
+
   if (!user) return null;
 
   const getInitials = (name: string) => {
@@ -77,6 +81,10 @@ export default function UserDropdown() {
             </p>
           </div>
         </DropdownMenuLabel>
+        <DropdownMenuItem onClick={goToProfile}>
+          <User className="mr-2 h-4 w-4" />
+          <span>Hồ sơ của tôi</span>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onLogout} disabled={isPending}>
           <LogOut className="mr-2 h-4 w-4" />
