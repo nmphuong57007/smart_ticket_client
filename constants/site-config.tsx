@@ -20,4 +20,6 @@ export const routes = {
   checkout: "/checkout",
   movieDetail: (id:number | string) => `/movies/detail/${id}`,
   combos: "/combos",
+  profile: "/profile",
 };
+
