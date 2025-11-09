@@ -14,31 +14,6 @@ WHITE='\033[0;37m'
 BOLD='\033[1m'
 NC='\033[0m' # No Color
 
-# Banner ASCII Art
-clear
-echo -e "${CYAN}"
-cat << "EOF"
-    ╔═══════════════════════════════════════════════════════════╗
-    ║                                                           ║
-    ║   ███████╗███╗   ███╗ █████╗ ██████╗ ████████╗          ║
-    ║   ██╔════╝████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝          ║
-    ║   ███████╗██╔████╔██║███████║██████╔╝   ██║             ║
-    ║   ╚════██║██║╚██╔╝██║██╔══██║██╔══██╗   ██║             ║
-    ║   ███████║██║ ╚═╝ ██║██║  ██║██║  ██║   ██║             ║
-    ║   ╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝             ║
-    ║                                                           ║
-    ║   ████████╗██╗ ██████╗██╗  ██╗███████╗████████╗         ║
-    ║   ╚══██╔══╝██║██╔════╝██║ ██╔╝██╔════╝╚══██╔══╝         ║
-    ║      ██║   ██║██║     █████╔╝ █████╗     ██║            ║
-    ║      ██║   ██║██║     ██╔═██╗ ██╔══╝     ██║            ║
-    ║      ██║   ██║╚██████╗██║  ██╗███████╗   ██║            ║
-    ║      ╚═╝   ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝   ╚═╝            ║
-    ║                                                           ║
-    ║                  Smart Ticket Client                      ║
-    ╚═══════════════════════════════════════════════════════════╝
-EOF
-echo -e "${NC}"
-
 # Get system info
 HOSTNAME=$(hostname)
 OS_NAME=$(cat /etc/os-release | grep "PRETTY_NAME" | cut -d'"' -f2)
@@ -122,6 +97,18 @@ echo -e "${BOLD}${CYAN}Environment:${NC}  ${NODE_ENV:-production}"
 echo ""
 echo -e "${BOLD}${GREEN}✅ Starting Next.js services...${NC}"
 echo ""
+
+# Generate runtime env config for client-side consumption
+# This file will be served from /env-config.js and populated from
+# environment variables available at container start. This allows changing
+# client-facing NEXT_PUBLIC_* values without rebuilding the image.
+cat > /app/public/env-config.js <<- 'EOF'
+window.__ENV = {
+  NEXT_PUBLIC_API_BASE_URL: "${NEXT_PUBLIC_API_BASE_URL}",
+  NEXT_PUBLIC_CRYPTO_SECRET: "${NEXT_PUBLIC_CRYPTO_SECRET}",
+  PORT: "${PORT}"
+};
+EOF
 
 # Start supervisor
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
