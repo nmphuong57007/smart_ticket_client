@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,13 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationNext,
-} from "@/components/ui/pagination";
 
 interface Movie {
   id: number;
@@ -46,10 +37,6 @@ interface MovieListData {
 
 interface MovieListProps {
   data?: MovieListData;
-  pagination?: {
-    current_page: number;
-    last_page: number;
-  };
 }
 
 function formatLanguage(lang: string) {
@@ -75,14 +62,14 @@ function formatDate(d: string) {
   }
 }
 
-export default function MovieList({ data, pagination }: MovieListProps) {
+export default function MovieShowingList({ data }: MovieListProps) {
   const movies = data?.movies ?? [];
 
   if (!movies.length) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Danh sách phim</CardTitle>
+          <CardTitle>Danh sách phim đang chiếu</CardTitle>
           <CardDescription>Không có phim để hiển thị.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -97,7 +84,7 @@ export default function MovieList({ data, pagination }: MovieListProps) {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Danh sách phim</h2>
+          <h2 className="text-xl font-semibold">Danh sách phim đang chiếu</h2>
           <p className="text-sm text-muted-foreground">
             Tổng cộng {movies.length} phim
           </p>
@@ -158,32 +145,6 @@ export default function MovieList({ data, pagination }: MovieListProps) {
           </Card>
         ))}
       </div>
-
-      {/* Phân trang (tuỳ chọn, hiển thị khi có dữ liệu phân trang) */}
-      {pagination && pagination.last_page > 1 && (
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href={`?page=${Math.max(1, pagination.current_page - 1)}`}
-              />
-            </PaginationItem>
-            <PaginationItem>
-              <div className="px-3 py-2 text-sm">
-                Trang {pagination.current_page} / {pagination.last_page}
-              </div>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext
-                href={`?page=${Math.min(
-                  pagination.last_page,
-                  pagination.current_page + 1
-                )}`}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )}
     </div>
   );
 }

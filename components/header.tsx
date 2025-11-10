@@ -18,7 +18,7 @@ import { ModeToggle } from "./mode-toggle";
 
 const navItems = [
   { href: redirectConfig.home, label: "Trang chủ", icon: Home },
-  { href: redirectConfig.movies, label: "Phim đang chiếu", icon: Clapperboard },
+  { href: redirectConfig.movieShowing, label: "Phim đang chiếu", icon: Clapperboard },
   { href: redirectConfig.upcomingMovies, label: "Phim sắp chiếu", icon: Clock },
   {
     href: redirectConfig.foodAndDrinks,
