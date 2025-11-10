@@ -80,7 +80,7 @@ else
 fi
 
 # Display info in neofetch style
-echo -e "${BOLD}${YELLOW}smart-ticket-client@${HOSTNAME}${NC}"
+echo -e "${BOLD}${YELLOW}smart-ticket-admin@${HOSTNAME}${NC}"
 echo -e "${BOLD}${YELLOW}$(printf '%.0s-' {1..50})${NC}"
 echo -e "${BOLD}${BLUE}OS:${NC}           ${OS_NAME}"
 echo -e "${BOLD}${BLUE}Kernel:${NC}       ${KERNEL}"

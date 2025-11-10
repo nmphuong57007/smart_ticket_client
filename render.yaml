@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: smart-ticket-client
+    name: smart-ticket-admin
     env: docker
     dockerfilePath: ./Dockerfile
     plan: standard
