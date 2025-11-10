@@ -4,20 +4,20 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useMovies } from "@/api/hooks/use-movie";
 import { Spinner } from "@/components/ui/spinner";
-import MovieShowingList from "./movie-showing-list";
 import Pagination from "@/components/pagination";
 import Search from "@/components/search";
+import MovieUpcomingList from "./movie-upcoming-list";
 
 const PER_PAGE = 12;
 
-export default function MovieShowingContainer() {
+export default function MovieUpcomingContainer() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
   const { data, isError, isLoading } = useMovies(
     PER_PAGE,
     page,
-    "showing",
+    "coming",
     "release_date",
     search
   );
@@ -48,7 +48,7 @@ export default function MovieShowingContainer() {
           <Spinner className="size-8" />
         </div>
       ) : (
-        <MovieShowingList
+        <MovieUpcomingList
           data={data?.data}
           totalItems={data?.data.pagination.total}
         />

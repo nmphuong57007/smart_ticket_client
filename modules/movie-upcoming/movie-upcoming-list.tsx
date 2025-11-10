@@ -63,14 +63,17 @@ function formatDate(d: string) {
   }
 }
 
-export default function MovieShowingList({ data, totalItems }: MovieListProps) {
+export default function MovieUpcomingList({
+  data,
+  totalItems,
+}: MovieListProps) {
   const movies = data?.movies ?? [];
 
   if (!movies.length) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Danh sách phim đang chiếu</CardTitle>
+          <CardTitle>Danh sách phim sắp chiếu</CardTitle>
           <CardDescription>Không có phim để hiển thị.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -85,7 +88,7 @@ export default function MovieShowingList({ data, totalItems }: MovieListProps) {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Danh sách phim đang chiếu</h2>
+          <h2 className="text-xl font-semibold">Danh sách phim sắp chiếu</h2>
           <p className="text-sm text-muted-foreground">
             Tổng cộng {totalItems} phim
           </p>
