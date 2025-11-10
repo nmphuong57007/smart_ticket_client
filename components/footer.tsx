@@ -1,230 +1,193 @@
+"use client";
+
 import Link from "next/link";
-import { Facebook, Youtube, Instagram, Phone, Mail } from "lucide-react";
+import {
+  Facebook,
+  Instagram,
+  Twitter,
+  Github,
+  Clapperboard,
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
 
-import { routes } from "../constants/site-config";
-
-const accountLinks = [
-  { label: "Đăng nhập", href: routes.login },
-  { label: "Đăng ký", href: routes.register },
-];
-
-const smartTicketLinks = [
-  { label: "Giới thiệu", href: routes.about },
-  { label: "Liên hệ", href: routes.contact },
-  { label: "Tuyển dụng", href: routes.careers },
-];
-
-const movieLinks = [
-  { label: "Phim đang chiếu", href: routes.moviesNowShowing },
-  { label: "Phim sắp chiếu", href: routes.moviesComingSoon },
-  { label: "Suất chiếu đặc biệt", href: routes.moviesSpecial },
-];
-
-const cinemaLocations = [
-  "SmartTicket Indochina Plaza",
-  "SmartTicket Phạm Ngọc Thạch",
-  "SmartTicket Smart City",
-  "SmartTicket Hai Bà Trưng",
-];
-
-const socialLinks = [
-  {
-    icon: Facebook,
-    href: "https://facebook.com/smartticket",
-    label: "Facebook",
-  },
-  { icon: Youtube, href: "https://youtube.com/smartticket", label: "YouTube" },
-  {
-    icon: Instagram,
-    href: "https://instagram.com/smartticket",
-    label: "Instagram",
-  },
-];
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border">
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Logo và Social Media */}
-          <div className="space-y-8">
-            <div className="flex items-center space-x-5">
-              <img
-                src="/smart_ticket.svg"
-                alt="Smart Ticket Logo"
-                width={90}
-                height={90}
-                className="w-[90px] h-[90px]"
-              />
+    <footer className="border-t">
+      <div className="container mx-auto px-4 py-10">
+        {/* 5 cột: Brand + 4 cột link */}
+        <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+          {/* Brand + intro */}
+          <div className="space-y-4 lg:col-span-1">
+            <div className="flex items-center gap-2">
+              <Clapperboard className="h-6 w-6" />
+              <span className="font-bold text-xl">Smart Ticket</span>
             </div>
 
-            <div className="flex space-x-5">
-              {socialLinks.map((social) => (
-                <Link
-                  key={social.label}
-                  href={social.href}
-                  className="w-12 h-12 bg-muted text-muted-foreground rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                  aria-label={social.label}
-                >
-                  <social.icon className="w-6 h-6" />
+            <p className="text-sm text-muted-foreground leading-6">
+              Building beautiful and functional ticket experiences with modern
+              technologies. We help startups and businesses create their digital
+              presence.
+            </p>
+
+            <div className="flex gap-2">
+              <Button variant="ghost" size="icon" asChild aria-label="Facebook">
+                <Link href="https://facebook.com" target="_blank">
+                  <Facebook className="h-4 w-4" />
                 </Link>
-              ))}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                asChild
+                aria-label="Instagram"
+              >
+                <Link href="https://instagram.com" target="_blank">
+                  <Instagram className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button variant="ghost" size="icon" asChild aria-label="Twitter">
+                <Link href="https://twitter.com" target="_blank">
+                  <Twitter className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button variant="ghost" size="icon" asChild aria-label="Github">
+                <Link href="https://github.com" target="_blank">
+                  <Github className="h-4 w-4" />
+                </Link>
+              </Button>
             </div>
           </div>
 
-          {/* Tài khoản */}
-          <div>
-            <h4 className="text-xl font-bold mb-6 text-primary">TÀI KHOẢN</h4>
-            <ul className="space-y-4">
-              {accountLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-foreground hover:text-primary transition-colors font-medium"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+          {/* About Us */}
+          <div className="space-y-3">
+            <h4 className="font-semibold">About Us</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="#" className="hover:underline">
+                  Company History
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:underline">
+                  Meet the Team
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:underline">
+                  Employee Handbook
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:underline">
+                  Careers
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Smart Ticket */}
-          <div>
-            <h4 className="text-xl font-bold mb-6 text-primary">
-              SMART TICKET
-            </h4>
-            <ul className="space-y-4">
-              {smartTicketLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-foreground hover:text-primary transition-colors font-medium"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+          {/* Our Services */}
+          <div className="space-y-3">
+            <h4 className="font-semibold">Our Services</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="#" className="hover:underline">
+                  Web Development
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:underline">
+                  Web Design
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:underline">
+                  Marketing
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:underline">
+                  Google Ads
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Xem phim */}
-          <div>
-            <h4 className="text-xl font-bold mb-6 text-primary">XEM PHIM</h4>
-            <ul className="space-y-4">
-              {movieLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-foreground hover:text-primary transition-colors font-medium"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+          {/* Helpful Links */}
+          <div className="space-y-3">
+            <h4 className="font-semibold">Helpful Links</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="#" className="hover:underline">
+                  FAQs
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:underline">
+                  Support
+                </Link>
+              </li>
+              <li className="flex items-center gap-2">
+                <Link href="#" className="hover:underline">
+                  Live Chat
+                </Link>
+                <Badge variant="secondary" className="px-1 py-0 text-[10px]">
+                  •
+                </Badge>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Us */}
+          <div className="space-y-3">
+            <h4 className="font-semibold">Contact Us</h4>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                <Link
+                  href="mailto:hello@smartticket.com"
+                  className="hover:underline"
+                >
+                  hello@smartticket.com
+                </Link>
+              </li>
+              <li className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                <Link href="tel:+918637373116" className="hover:underline">
+                  +91 8637373116
+                </Link>
+              </li>
+              <li className="flex items-start gap-2">
+                <MapPin className="h-4 w-4 mt-0.5" />
+                <span>Kolkata, West Bengal, India</span>
+              </li>
             </ul>
           </div>
         </div>
 
-        {/* Hệ thống rạp */}
-        <div className="mt-16 pt-12 border-t border-border">
-          <h4 className="text-xl font-bold mb-8 text-primary">HỆ THỐNG RẠP</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div>
-              <h5 className="font-semibold mb-4 text-foreground text-lg">
-                Tất cả hệ thống rạp
-              </h5>
-              <ul className="space-y-3">
-                {cinemaLocations.map((location, index) => (
-                  <li key={index}>
-                    <Link
-                      href={`/cinemas/${location
-                        .toLowerCase()
-                        .replace(/\s+/g, "-")}`}
-                      className="text-muted-foreground hover:text-primary transition-colors font-medium"
-                    >
-                      {location}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="md:col-span-3">
-              <Link
-                href={routes.cinemasSpecialScreenings}
-                className="text-foreground hover:text-primary transition-colors font-medium text-lg"
-              >
-                Suất chiếu đặc biệt
-              </Link>
-            </div>
+        <Separator className="my-8" />
+
+        {/* Bottom bar */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+          <span>
+            © {new Date().getFullYear()} Smart Ticket. All rights reserved.
+          </span>
+          <div className="flex gap-4">
+            <Link href="#" className="hover:underline">
+              Terms
+            </Link>
+            <Link href="#" className="hover:underline">
+              Privacy
+            </Link>
+            <Link href="#" className="hover:underline">
+              Cookies
+            </Link>
           </div>
-        </div>
-
-        {/* Company Info */}
-        <div className="mt-16 pt-12 border-t border-border">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            <div className="lg:col-span-2">
-              <h5 className="font-bold mb-5 text-primary text-xl">LIÊN HỆ</h5>
-              <p className="text-foreground mb-4 font-medium">
-                CÔNG TY CỔ PHẦN Smart Smart TICKET
-              </p>
-
-              <div className="flex items-center space-x-3 mb-3">
-                <Phone className="w-5 h-5 text-primary" />
-                <span className="text-foreground">
-                  Hotline:{" "}
-                  <a
-                    href="tel:19006368007"
-                    className="hover:text-primary font-medium"
-                  >
-                    1900 636807
-                  </a>{" "}
-                  /{" "}
-                  <a
-                    href="tel:18006464220"
-                    className="hover:text-primary font-medium"
-                  >
-                    1800 646420
-                  </a>
-                </span>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-primary" />
-                <span className="text-foreground">
-                  Email:{" "}
-                  <a
-                    href="mailto:mkt@ticketcinemas.vn"
-                    className="hover:text-primary font-medium"
-                  >
-                    mkt@ticketcinemas.vn
-                  </a>
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col space-y-4 lg:items-end">
-              <Link
-                href={routes.privacyPolicy}
-                className="text-foreground hover:text-primary transition-colors font-medium"
-              >
-                Chính sách bảo mật
-              </Link>
-              <Link
-                href={routes.faq}
-                className="text-foreground hover:text-primary transition-colors font-medium"
-              >
-                Hỏi đáp
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Copyright */}
-        <div className="mt-12 pt-8 border-t text-center">
-          <p className="text-muted-foreground font-medium">
-            © 2025 SmartTicket. All rights reserved.
-          </p>
         </div>
       </div>
     </footer>
