@@ -1,3 +1,5 @@
+import MovieContainer from "@/modules/movie/movie-container";
+
 export default function MoviesPage() {
-  return <div>MoviesPage</div>;
+  return <MovieContainer />;
 }

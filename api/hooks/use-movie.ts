@@ -1,17 +1,17 @@
 import { useQuery, queryOptions } from "@tanstack/react-query";
 
-import { hasToken } from "@/helpers/has-token";
 import { getMovies } from "../services/movie-api";
 
 export const useMovies = (
   per_page?: number,
   page?: number,
-  sort_order?: string
+  status?: string,
+  sort_by?: string,
+  search?: string
 ) => {
   return useQuery({
-    queryKey: ["getMovies", per_page, page, sort_order],
-    queryFn: () => getMovies(per_page, page, sort_order),
-    enabled: hasToken(),
+    queryKey: ["allMovies", per_page, page, status, sort_by, search],
+    queryFn: () => getMovies(per_page, page, status, sort_by, search),
     ...queryOptions,
   });
 };

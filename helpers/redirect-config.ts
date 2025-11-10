@@ -4,4 +4,5 @@ export const redirectConfig = {
   movies: "/movies",
   upcomingMovies: "/upcoming-movies",
   foodAndDrinks: "/food-and-drinks",
+  cinemas: "/cinemas",
 };

@@ -27,17 +27,17 @@ export default function Providers({
   });
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
         <ReactQueryDevtools initialIsOpen={false} />
         <Fragment>{children}</Fragment>
         <Toaster position="top-center" />
-      </QueryClientProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }

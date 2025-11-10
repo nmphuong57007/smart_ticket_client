@@ -8,6 +8,7 @@ import {
   Clock,
   UtensilsCrossed,
   LogIn,
+  MapPin,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -17,13 +18,14 @@ import { ModeToggle } from "./mode-toggle";
 
 const navItems = [
   { href: redirectConfig.home, label: "Trang chủ", icon: Home },
-  { href: redirectConfig.movies, label: "Danh sách phim", icon: Clapperboard },
+  { href: redirectConfig.movies, label: "Phim đang chiếu", icon: Clapperboard },
   { href: redirectConfig.upcomingMovies, label: "Phim sắp chiếu", icon: Clock },
   {
     href: redirectConfig.foodAndDrinks,
     label: "Đồ ăn, thức uống",
     icon: UtensilsCrossed,
   },
+  { href: redirectConfig.cinemas, label: "Rạp chiếu", icon: MapPin },
 ];
 
 export default function Header() {
