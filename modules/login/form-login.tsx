@@ -49,7 +49,7 @@ export default function FormLogin() {
       onSuccess: (data) => {
         toast.success("Đăng nhập thành công!");
         setToken(data.data.token);
-        router.push(redirectConfig.dashboard);
+        router.push(redirectConfig.cinemas);
       },
 
       onError: () => {
