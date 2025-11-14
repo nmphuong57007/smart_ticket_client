@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smart-Ticket-Client",
+  title: "Smart Ticket Client",
   description: "Smart ticket client ứng dụng đặt vé xem phim thông minh",
 };
 

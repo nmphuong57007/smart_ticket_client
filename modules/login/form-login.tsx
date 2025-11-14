@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { useDeviceName } from "@/hooks/use-device-name";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,7 @@ export default function FormLogin() {
       onSuccess: (data) => {
         toast.success("Đăng nhập thành công!");
         setToken(data.data.token);
-        router.push(redirectConfig.cinemas);
+        router.push(redirectConfig.home);
       },
 
       onError: () => {
@@ -69,7 +70,7 @@ export default function FormLogin() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="you@example.com" {...field} />
+                <Input placeholder="Nhập địa chỉ email của bạn" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -82,7 +83,7 @@ export default function FormLogin() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Mật khẩu</FormLabel>
               <FormControl>
                 <Input
                   type="password"
@@ -99,6 +100,17 @@ export default function FormLogin() {
           Đăng nhập
           {isLoggingIn && <Spinner />}
         </Button>
+
+        {/* Chưa có tài khoản đăng ký ngay */}
+        <div className="text-sm text-center text-gray-600">
+          Chưa có tài khoản?{" "}
+          <Link
+            href={redirectConfig.register}
+            className="text-blue-600 hover:underline hover:text-blue-800"
+          >
+            Đăng ký ngay
+          </Link>
+        </div>
       </form>
     </Form>
   );

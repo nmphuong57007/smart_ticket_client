@@ -20,7 +20,7 @@ interface Movie {
   poster: string;
   trailer: string;
   description: string;
-  genre: string;
+  genres: { id: number; name: string }[];
   duration: number;
   format: string;
   language: string;
@@ -114,7 +114,13 @@ export default function MovieShowingList({ data, totalItems }: MovieListProps) {
             <CardHeader className="space-y-2">
               <CardTitle className="line-clamp-2">{m.title}</CardTitle>
               <CardDescription className="flex flex-wrap gap-2">
-                <Badge variant="secondary">{m.genre}</Badge>
+                {Array.isArray(m.genres) && m.genres.length > 0 ? (
+                  m.genres.map((g) => (
+                    <Badge key={g.id} variant="secondary">
+                      {g.name}
+                    </Badge>
+                  ))
+                ) : null}
                 <Badge variant="outline">{m.duration} phút</Badge>
               </CardDescription>
               <div className="flex flex-wrap gap-2">

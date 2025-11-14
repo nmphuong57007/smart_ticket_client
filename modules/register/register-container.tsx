@@ -1,4 +1,4 @@
-import FormLogin from "./form-login";
+import RegisterForm from "./register-form";
 import {
   Card,
   CardContent,
@@ -7,19 +7,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function LoginContainer() {
-
+export default function RegisterContainer() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Chào mừng bạn trở lại!</CardTitle>
+        <CardTitle>Chào mừng bạn</CardTitle>
         <CardDescription>
-          Đăng nhập để tiếp tục trải nghiệm của bạn
+          Tạo tài khoản để bắt đầu trải nghiệm của bạn
         </CardDescription>
       </CardHeader>
 
       <CardContent>
-        <FormLogin />
+        <RegisterForm />
       </CardContent>
     </Card>
   );
