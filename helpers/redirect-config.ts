@@ -6,4 +6,5 @@ export const redirectConfig = {
   movieDetail: (movieId: number) => `/movie/${movieId}/detail`,
   movieShowing: "/movie/movie-showing",
   upcomingMovies: "/movie/upcoming-movies",
+  payment: "/payment",
 };

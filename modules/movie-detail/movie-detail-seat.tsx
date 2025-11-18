@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { redirectConfig } from "@/helpers/redirect-config";
+import { useRouter } from "next/navigation";
 
 export type SeatStatus = "available" | "booked" | "vip" | "selected";
 
@@ -35,6 +37,8 @@ export default function MovieSeatMap({
   seatMap,
   orderPreview,
 }: MovieSeatMapProps) {
+  const router = useRouter();
+
   const [selectedSeats, setSelectedSeats] = useState<string[]>(() => {
     const selectedFromStatus = seatMap
       .flat()
@@ -58,8 +62,12 @@ export default function MovieSeatMap({
 
   const formattedTotal = orderPreview.totalPrice.toLocaleString("vi-VN") + "đ";
 
+  const handlePayment = () => {
+    router.push(redirectConfig.payment);
+  };
+
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm h-fit sticky top-20">
       <CardHeader>
         <CardTitle className="text-center">Sơ Đồ Ghế Ngồi</CardTitle>
       </CardHeader>
@@ -92,11 +100,9 @@ export default function MovieSeatMap({
                     aria-label={`Ghế ${seat.code} - ${seat.status}`}
                   >
                     <span
-                      className={
-                        `text-[10px] leading-none ${
-                          isBooked ? "line-through opacity-60" : ""
-                        } ${isVip ? "text-yellow-400 font-semibold" : ""}`
-                      }
+                      className={`text-[10px] leading-none ${
+                        isBooked ? "line-through opacity-60" : ""
+                      } ${isVip ? "text-yellow-400 font-semibold" : ""}`}
                     >
                       {isBooked ? "×" : seat.code}
                     </span>
@@ -184,7 +190,7 @@ export default function MovieSeatMap({
       </CardContent>
 
       <CardFooter>
-        <Button className="w-full" size="lg">
+        <Button className="w-full" size="lg" onClick={handlePayment}>
           Thanh Toán
         </Button>
       </CardFooter>
