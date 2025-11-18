@@ -119,8 +119,18 @@ export default function UserDropdown({
         </div>
 
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Chỉnh sửa thông tin tài khoản</DropdownMenuItem>
-        <DropdownMenuItem variant="destructive" onClick={() => handleLogout()}>
+        <DropdownMenuItem
+          onClick={() => router.push(redirectConfig.profile)}
+          className="cursor-pointer"
+        >
+          Chỉnh sửa thông tin tài khoản
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          variant="destructive"
+          onClick={() => handleLogout()}
+          className="cursor-pointer"
+        >
           Đăng xuất
         </DropdownMenuItem>
       </DropdownMenuContent>

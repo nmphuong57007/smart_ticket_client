@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
   Card,
@@ -13,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { redirectConfig } from "@/helpers/redirect-config";
 
 interface Movie {
   id: number;
@@ -64,6 +66,8 @@ function formatDate(d: string) {
 }
 
 export default function MovieShowingList({ data, totalItems }: MovieListProps) {
+  const router = useRouter();
+
   const movies = data?.movies ?? [];
 
   if (!movies.length) {
@@ -79,6 +83,10 @@ export default function MovieShowingList({ data, totalItems }: MovieListProps) {
       </Card>
     );
   }
+
+  const handleDetailClick = (movieId: number) => {
+    router.push(redirectConfig.movieDetail(movieId));
+  };
 
   return (
     <div className="space-y-6">
@@ -114,13 +122,13 @@ export default function MovieShowingList({ data, totalItems }: MovieListProps) {
             <CardHeader className="space-y-2">
               <CardTitle className="line-clamp-2">{m.title}</CardTitle>
               <CardDescription className="flex flex-wrap gap-2">
-                {Array.isArray(m.genres) && m.genres.length > 0 ? (
-                  m.genres.map((g) => (
-                    <Badge key={g.id} variant="secondary">
-                      {g.name}
-                    </Badge>
-                  ))
-                ) : null}
+                {Array.isArray(m.genres) && m.genres.length > 0
+                  ? m.genres.map((g) => (
+                      <Badge key={g.id} variant="secondary">
+                        {g.name}
+                      </Badge>
+                    ))
+                  : null}
                 <Badge variant="outline">{m.duration} phút</Badge>
               </CardDescription>
               <div className="flex flex-wrap gap-2">
@@ -140,8 +148,11 @@ export default function MovieShowingList({ data, totalItems }: MovieListProps) {
             </CardContent>
 
             <CardFooter className="mt-auto flex gap-2">
-              <Button asChild className="flex-1">
-                <Link href={`/movies/${m.id}`}>Mua vé</Link>
+              <Button
+                className="flex-1"
+                onClick={() => handleDetailClick(m.id)}
+              >
+                Mua vé
               </Button>
               <Button asChild variant="secondary" className="flex-1">
                 <Link href={m.trailer} target="_blank" rel="noreferrer">

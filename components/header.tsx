@@ -7,9 +7,7 @@ import {
   Home,
   Clapperboard,
   Clock,
-  UtensilsCrossed,
   LogIn,
-  MapPin,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,12 +27,6 @@ const navItems = [
     icon: Clapperboard,
   },
   { href: redirectConfig.upcomingMovies, label: "Phim sắp chiếu", icon: Clock },
-  {
-    href: redirectConfig.foodAndDrinks,
-    label: "Đồ ăn, thức uống",
-    icon: UtensilsCrossed,
-  },
-  { href: redirectConfig.cinemas, label: "Rạp chiếu", icon: MapPin },
 ];
 
 export default function Header() {
@@ -42,11 +34,9 @@ export default function Header() {
 
   const { data: profile, isLoading } = useProfile();
 
-  // tri-state: null = checking, true = logged in, false = not logged in
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Check token on mount (keeps initial render as loading/skeleton)
     const token = getToken();
     setIsLoggedIn(!!token);
   }, []);

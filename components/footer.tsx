@@ -14,13 +14,12 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 
 export default function Footer() {
   return (
     <footer className="border-t">
       <div className="container mx-auto px-4 py-10">
-        {/* 5 cột: Thương hiệu + 4 cột liên kết */}
+        {/* 5 cột: Thương hiệu + 4 cột liên kết (đã điều chỉnh cho app phim) */}
         <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {/* Thương hiệu + giới thiệu */}
           <div className="space-y-4 lg:col-span-1">
@@ -30,18 +29,14 @@ export default function Footer() {
             </div>
 
             <p className="text-sm text-muted-foreground leading-6">
-              Xây dựng những trải nghiệm đặt vé đẹp mắt và hiệu quả với các công
-              nghệ hiện đại. Chúng tôi giúp startup và doanh nghiệp tạo dựng
-              hiện diện số.
+              Ứng dụng đặt vé xem phim — duyệt lịch chiếu, chọn ghế và thanh
+              toán nhanh chóng. Theo dõi phim mới, rạp gần bạn và ưu đãi ăn
+              uống.
             </p>
 
             <div className="flex gap-2">
               <Button variant="ghost" size="icon" asChild aria-label="Facebook">
-                <Link
-                  href="https://facebook.com"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <Link href="#">
                   <Facebook className="h-4 w-4" />
                 </Link>
               </Button>
@@ -51,26 +46,18 @@ export default function Footer() {
                 asChild
                 aria-label="Instagram"
               >
-                <Link
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <Link href="#">
                   <Instagram className="h-4 w-4" />
                 </Link>
               </Button>
               <Button variant="ghost" size="icon" asChild aria-label="Twitter">
-                <Link
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <Link href="#">
                   <Twitter className="h-4 w-4" />
                 </Link>
               </Button>
               <Button variant="ghost" size="icon" asChild aria-label="Github">
                 <Link
-                  href="https://github.com"
+                  href="https://github.com/nmphuong57007/smart_ticket_client"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -80,81 +67,78 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Về chúng tôi */}
+          {/* Ứng dụng */}
           <div className="space-y-3">
-            <h4 className="font-semibold">Về chúng tôi</h4>
+            <h4 className="font-semibold">Ứng dụng</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="#" className="hover:underline">
-                  Lịch sử công ty
+                <Link href="/" className="hover:underline">
+                  Trang chủ
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:underline">
-                  Đội ngũ
+                <Link href="/movie-showing" className="hover:underline">
+                  Phim đang chiếu
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:underline">
-                  Sổ tay nhân viên
+                <Link href="/upcoming-movies" className="hover:underline">
+                  Phim sắp chiếu
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:underline">
-                  Tuyển dụng
+                <Link href="/cinemas" className="hover:underline">
+                  Rạp
+                </Link>
+              </li>
+              <li>
+                <Link href="/food-and-drinks" className="hover:underline">
+                  Đồ ăn & đồ uống
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Dịch vụ */}
+          {/* Tài khoản */}
           <div className="space-y-3">
-            <h4 className="font-semibold">Dịch vụ</h4>
+            <h4 className="font-semibold">Tài khoản</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="#" className="hover:underline">
-                  Phát triển Web
+                <Link href="/login" className="hover:underline">
+                  Đăng nhập
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:underline">
-                  Thiết kế Web
+                <Link href="/register" className="hover:underline">
+                  Đăng ký
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:underline">
-                  Marketing
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:underline">
-                  Quảng cáo Google
+                <Link href="/profile" className="hover:underline">
+                  Hồ sơ của tôi
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Liên kết hữu ích */}
+          {/* Hỗ trợ */}
           <div className="space-y-3">
-            <h4 className="font-semibold">Liên kết hữu ích</h4>
+            <h4 className="font-semibold">Hỗ trợ</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="#" className="hover:underline">
-                  Câu hỏi thường gặp (FAQ)
+                  Câu hỏi thường gặp
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:underline">
-                  Hỗ trợ
+                  Trung tâm trợ giúp
                 </Link>
               </li>
-              <li className="flex items-center gap-2">
+              <li>
                 <Link href="#" className="hover:underline">
-                  Trò chuyện trực tuyến
+                  Liên hệ hỗ trợ
                 </Link>
-                <Badge variant="secondary" className="px-1 py-0 text-[10px]">
-                  •
-                </Badge>
               </li>
             </ul>
           </div>
@@ -166,21 +150,21 @@ export default function Footer() {
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
                 <Link
-                  href="mailto:hello@smartticket.com"
+                  href="mailto:support@smartticket.com"
                   className="hover:underline"
                 >
-                  hello@smartticket.com
+                  support@smartticket.com
                 </Link>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
-                <Link href="tel:+918637373116" className="hover:underline">
-                  +91 8637373116
+                <Link href="tel:+842412345678" className="hover:underline">
+                  +84 24 1234 5678
                 </Link>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-0.5" />
-                <span>Thành phố Hà Nội, Việt Nam</span>
+                <span>Hà Nội, Việt Nam</span>
               </li>
             </ul>
           </div>

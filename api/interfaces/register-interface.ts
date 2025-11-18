@@ -1,9 +1,9 @@
 export interface RegisterReqInterface {
   fullname: string;
   email: string;
-  phone: string;
-  address: string;
-  gender: "male" | "female" | "other";
+  phone?: string;
+  address?: string;
+  gender?: "male" | "female" | "other";
   password: string;
   device_name: string;
 }

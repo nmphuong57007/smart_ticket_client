@@ -1,4 +1,4 @@
-import RegisterForm from "./register-form";
+import FormRegister from "./form-register";
 import {
   Card,
   CardContent,
@@ -18,7 +18,7 @@ export default function RegisterContainer() {
       </CardHeader>
 
       <CardContent>
-        <RegisterForm />
+        <FormRegister />
       </CardContent>
     </Card>
   );

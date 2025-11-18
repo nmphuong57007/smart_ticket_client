@@ -117,13 +117,13 @@ export default function MovieUpcomingList({
             <CardHeader className="space-y-2">
               <CardTitle className="line-clamp-2">{m.title}</CardTitle>
               <CardDescription className="flex flex-wrap gap-2">
-                {Array.isArray(m.genres) && m.genres.length > 0 ? (
-                  m.genres.map((g) => (
-                    <Badge key={g.id} variant="secondary">
-                      {g.name}
-                    </Badge>
-                  ))
-                ) : null}
+                {Array.isArray(m.genres) && m.genres.length > 0
+                  ? m.genres.map((g) => (
+                      <Badge key={g.id} variant="secondary">
+                        {g.name}
+                      </Badge>
+                    ))
+                  : null}
                 <Badge variant="outline">{m.duration} phút</Badge>
               </CardDescription>
               <div className="flex flex-wrap gap-2">
@@ -143,9 +143,9 @@ export default function MovieUpcomingList({
             </CardContent>
 
             <CardFooter className="mt-auto flex gap-2">
-              <Button asChild className="flex-1">
+              {/* <Button asChild className="flex-1">
                 <Link href={`/movies/${m.id}`}>Mua vé</Link>
-              </Button>
+              </Button> */}
               <Button asChild variant="secondary" className="flex-1">
                 <Link href={m.trailer} target="_blank" rel="noreferrer">
                   Trailer

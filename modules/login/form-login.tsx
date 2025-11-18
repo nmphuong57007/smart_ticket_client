@@ -53,8 +53,8 @@ export default function FormLogin() {
         router.push(redirectConfig.home);
       },
 
-      onError: () => {
-        toast.error("Đăng nhập thất bại. Vui lòng thử lại.");
+      onError: (err) => {
+        console.error(err);
       },
     });
   };

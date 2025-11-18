@@ -2,8 +2,8 @@ export const redirectConfig = {
   home: "/home",
   login: "/login",
   register: "/register",
-  movieShowing: "/movie-showing",
-  upcomingMovies: "/upcoming-movies",
-  foodAndDrinks: "/food-and-drinks",
-  cinemas: "/cinemas",
+  profile: "/user/profile",
+  movieDetail: (movieId: number) => `/movie/${movieId}/detail`,
+  movieShowing: "/movie/movie-showing",
+  upcomingMovies: "/movie/upcoming-movies",
 };

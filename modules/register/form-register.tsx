@@ -24,19 +24,38 @@ import { setToken } from "@/helpers/has-token";
 import { redirectConfig } from "@/helpers/redirect-config";
 
 const formSchema = z.object({
-  fullname: z.string().min(1, "Họ và tên là bắt buộc"),
-  email: z.string().email("Email không hợp lệ"),
+  fullname: z
+    .string()
+    .min(1, "Họ tên không được để trống")
+    .max(100, "Họ tên không được vượt quá 100 ký tự"),
+
+  email: z
+    .string()
+    .min(1, "Email không được để trống")
+    .email("Email không đúng định dạng")
+    .max(100, "Email không được vượt quá 100 ký tự"),
+
   phone: z
     .string()
-    .min(7, "Số điện thoại không hợp lệ")
-    .max(15, "Số điện thoại không hợp lệ"),
-  address: z.string().min(1, "Địa chỉ là bắt buộc"),
-  gender: z.enum(["male", "female", "other"]),
-  password: z.string().min(8, "Mật khẩu phải chứa ít nhất 8 ký tự"),
+    .max(20, "Số điện thoại không được vượt quá 20 ký tự")
+    .optional()
+    .or(z.literal("")),
+
+  address: z
+    .string()
+    .max(255, "Địa chỉ không được vượt quá 255 ký tự")
+    .optional()
+    .or(z.literal("")),
+
+  password: z
+    .string()
+    .min(1, "Mật khẩu không được để trống")
+    .min(8, "Mật khẩu phải có ít nhất 8 ký tự"),
+
   device_name: z.string().min(1, "Tên thiết bị là bắt buộc"),
 });
 
-export default function RegisterForm() {
+export default function FormRegister() {
   const router = useRouter();
 
   const { getDeviceName } = useDeviceName();
@@ -50,7 +69,6 @@ export default function RegisterForm() {
       email: "",
       phone: "",
       address: "",
-      gender: "male",
       password: "",
       device_name: getDeviceName(),
     },
@@ -61,7 +79,7 @@ export default function RegisterForm() {
       onSuccess: (data) => {
         toast.success("Đăng ký thành công!");
         setToken(data.data.token);
-        router.push(redirectConfig.cinemas);
+        router.push(redirectConfig.home);
       },
 
       onError: (err) => {
@@ -146,28 +164,6 @@ export default function RegisterForm() {
               <FormLabel>Địa chỉ</FormLabel>
               <FormControl>
                 <Input placeholder="Nhập địa chỉ" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* gender */}
-        <FormField
-          control={form.control}
-          name="gender"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Giới tính</FormLabel>
-              <FormControl>
-                <select
-                  className="w-full rounded-md border border-gray-300 px-3 py-2"
-                  {...field}
-                >
-                  <option value="male">Nam</option>
-                  <option value="female">Nữ</option>
-                  <option value="other">Khác</option>
-                </select>
               </FormControl>
               <FormMessage />
             </FormItem>

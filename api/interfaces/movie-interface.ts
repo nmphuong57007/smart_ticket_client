@@ -37,14 +37,17 @@ export interface MovieDetailResInterface {
     poster: string;
     trailer: string;
     description: string;
-    genres: { id: number; name: string }[];
     duration: number;
     format: string;
     language: string;
     release_date: string;
-    end_date: null | string;
+    end_date: string;
     status: string;
     created_at: string;
     updated_at: string;
+    genres: {
+      id: number;
+      name: string;
+    }[];
   };
 }
