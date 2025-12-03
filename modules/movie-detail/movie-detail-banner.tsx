@@ -40,7 +40,6 @@ export default function MovieDetailBanner(props: MovieDetailBannerProps) {
 
         {/* Info */}
         <div className="flex flex-col justify-end text-white space-y-3">
-          <p className="text-sm opacity-80">2024</p>
 
           <h1 className="text-3xl font-bold md:text-4xl">{title}</h1>
 
@@ -76,9 +75,6 @@ export default function MovieDetailBanner(props: MovieDetailBannerProps) {
               className="hidden md:block h-4 bg-white/40"
             />
 
-            <span className="text-xs border border-white/40 px-2 rounded">
-              C18
-            </span>
           </div>
         </div>
       </CardContent>

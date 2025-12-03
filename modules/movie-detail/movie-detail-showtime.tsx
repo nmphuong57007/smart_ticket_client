@@ -1,127 +1,117 @@
+"use client";
+
 import { useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-interface Showtime {
-  id: string;
-  time: string;
-}
-
-interface Cinema {
-  id: string;
-  name: string;
-  format: string;
-  showtimes: Showtime[];
-}
+import type {
+  MovieShowtimeByDate,
+  MovieShowtimeItem,
+} from "@/api/interfaces/showtime-interface";
 
 interface MovieDetailShowtimeProps {
-  cinemas: Cinema[];
-  dates: string[];
+  showtimeData: MovieShowtimeByDate[];
+  onSelectShowtime: (id: number, text: string) => void;
 }
 
 export default function MovieDetailShowtime({
-  cinemas,
-  dates,
+  showtimeData,
+  onSelectShowtime,
 }: MovieDetailShowtimeProps) {
-  const [selectedCinemaId, setSelectedCinemaId] = useState<string | undefined>(
-    cinemas[0]?.id
-  );
-  const [selectedDate, setSelectedDate] = useState<string | undefined>(
-    dates[0]
-  );
-  const [selectedShowtimeId, setSelectedShowtimeId] = useState<string | null>(
+  const dates = showtimeData.map((item) => item.date);
+  const [selectedDate, setSelectedDate] = useState<string>(dates[0] ?? "");
+  const [selectedShowtimeId, setSelectedShowtimeId] = useState<number | null>(
     null
   );
 
-  const selectedCinema = cinemas.find((c) => c.id === selectedCinemaId);
+  const selectedDateData = showtimeData.find(
+    (item) => item.date === selectedDate
+  );
+
+  if (!showtimeData.length) return <p>Không có lịch chiếu.</p>;
+
+  // ⭐ Language mapping
+  const LANGUAGE_LABEL: Record<string, string> = {
+    sub: "Phụ đề",
+    subtitled: "Phụ đề",
+    dub: "Lồng tiếng",
+    dubbing: "Lồng tiếng",
+    narrated: "Thuyết minh",
+  };
+
+  // ⭐ Group showtime by language type
+  const groupedByLanguage = selectedDateData
+    ? selectedDateData.showtimes.reduce((acc, st) => {
+        const key = LANGUAGE_LABEL[st.language_type] || "Khác";
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(st);
+        return acc;
+      }, {} as Record<string, MovieShowtimeItem[]>)
+    : {};
 
   return (
     <section className="space-y-4">
       <h2 className="text-xl font-semibold">Chọn Suất Chiếu</h2>
 
-      {/* Selects */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="w-full">
-          <Select
-            value={selectedCinemaId}
-            onValueChange={(value) => {
-              setSelectedCinemaId(value);
-              setSelectedShowtimeId(null);
-            }}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Chọn Rạp" />
-            </SelectTrigger>
-            <SelectContent>
-              {cinemas.map((cinema) => (
-                <SelectItem key={cinema.id} value={cinema.id}>
-                  {cinema.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      {/* ⭐ NGÀY CHIẾU — hiển thị ngang */}
+      <div className="flex gap-3 overflow-x-auto py-2">
+        {dates.map((date) => {
+          const isActive = selectedDate === date;
 
-        {/* Date Select */}
-        <div className="w-full">
-          <Select
-            value={selectedDate}
-            onValueChange={(value) => {
-              setSelectedDate(value);
-              setSelectedShowtimeId(null);
-            }}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Chọn Ngày" />
-            </SelectTrigger>
-            <SelectContent>
-              {dates.map((date) => (
-                <SelectItem key={date} value={date}>
-                  {date}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+          return (
+            <Button
+              key={date}
+              variant={isActive ? "default" : "outline"}
+              onClick={() => {
+                setSelectedDate(date);
+                setSelectedShowtimeId(null); // reset giờ chiếu
+              }}
+              size="sm"
+              className="whitespace-nowrap"
+            >
+              {date}
+            </Button>
+          );
+        })}
       </div>
 
-      {/* Showtime card */}
-      {selectedCinema && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{selectedCinema.name}</CardTitle>
-            <CardDescription>{selectedCinema.format}</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-3">
-            {selectedCinema.showtimes.map((showtime) => {
-              const isActive = showtime.id === selectedShowtimeId;
-              return (
-                <Button
-                  key={showtime.id}
-                  variant={isActive ? "default" : "outline"}
-                  onClick={() => setSelectedShowtimeId(showtime.id)}
-                  size="sm"
-                >
-                  {showtime.time}
-                </Button>
-              );
-            })}
-          </CardContent>
-        </Card>
-      )}
+      {/* ⭐ DANH SÁCH SUẤT CHIẾU */}
+      <Card className="p-4">
+        {Object.entries(groupedByLanguage).map(([label, items]) => (
+          <div key={label} className="mb-4">
+            <div className="text-base font-semibold mb-2">{label}</div>
+
+            <div className="flex flex-wrap gap-3">
+              {items.map((st) => {
+                const isSelected = st.id === selectedShowtimeId;
+
+                return (
+                  <Button
+                    key={st.id}
+                    variant={isSelected ? "default" : "outline"}
+                    onClick={() => {
+                      setSelectedShowtimeId(st.id);
+
+                      // ⭐ Gửi text showtime lên container
+                      const text = `${st.show_time} - ${selectedDate}`;
+                      onSelectShowtime(st.id, text);
+                    }}
+                    size="sm"
+                  >
+                    {st.show_time}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+
+        {Object.keys(groupedByLanguage).length === 0 && (
+          <p className="text-muted-foreground">
+            Không có suất chiếu cho ngày này.
+          </p>
+        )}
+      </Card>
     </section>
   );
 }
