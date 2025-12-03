@@ -1,23 +1,39 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { useCreatePayment } from "@/api/hooks/use-payment";
+import { useState } from "react";
 
 interface PaymentMethodProps {
   total: number;
-  onPaymentSuccess?: () => void;
+  bookingId: number;
 }
 
-export default function PaymentMethod({
-  total,
-  onPaymentSuccess,
-}: PaymentMethodProps) {
-  const totalText = `${total.toLocaleString("vi-VN")}đ`;
+export default function PaymentMethod({ total, bookingId }: PaymentMethodProps) {
+  const createPayment = useCreatePayment();
 
-  const handleClickPay = () => {
-    onPaymentSuccess?.();
+  const [bankCode, setBankCode] = useState<string>(""); // mặc định dùng cổng VNPay
+
+  const handlePay = () => {
+    if (!bookingId) {
+      console.error("Missing bookingId");
+      return;
+    }
+
+    createPayment.mutate(
+      {
+        booking_id: bookingId,
+      },
+      {
+        onSuccess: (res) => {
+          if (res.success && res.payment_url) {
+            window.location.href = res.payment_url; // chuyển sang VNPay
+          }
+        },
+        onError: (err) => {
+          console.error("Payment error:", err);
+        },
+      }
+    );
   };
 
   return (
@@ -26,63 +42,55 @@ export default function PaymentMethod({
         <CardTitle>Chọn phương thức thanh toán</CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        <Tabs defaultValue="card" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="card">Thẻ Tín dụng/Ghi nợ</TabsTrigger>
-            <TabsTrigger value="ewallet">Ví Điện tử</TabsTrigger>
-            <TabsTrigger value="bank">Internet Banking</TabsTrigger>
-          </TabsList>
+      <CardContent className="space-y-6 justify-center">
+        <div className="space-y-3">
+          {/* <h4 className="font-semibold">Chọn phương thức thanh toán</h4> */}
 
-          {/* Thẻ tín dụng / ghi nợ */}
-          <TabsContent value="card" className="space-y-4">
-            <div className="space-y-2">
-              <Label>Số thẻ</Label>
-              <Input placeholder="0000 0000 0000 0000" />
-            </div>
+          {/* VNPAYQR */}
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name="bankCode"
+              value="VNPAYQR"
+              checked={bankCode === "VNPAYQR"}
+              onChange={(e) => setBankCode(e.target.value)}
+            />
+            Thanh toán bằng ứng dụng hỗ trợ VNPAYQR
+          </label>
 
-            <div className="space-y-2">
-              <Label>Tên trên thẻ</Label>
-              <Input placeholder="NGUYEN VAN A" />
-            </div>
+          {/* ATM / Banking */}
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name="bankCode"
+              value="VNBANK"
+              checked={bankCode === "VNBANK"}
+              onChange={(e) => setBankCode(e.target.value)}
+            />
+            Thanh toán qua thẻ ATM / Tài khoản nội địa
+          </label>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label>Ngày hết hạn</Label>
-                <Input placeholder="MM/YY" />
-              </div>
+          {/* Thẻ quốc tế */}
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name="bankCode"
+              value="INTCARD"
+              checked={bankCode === "INTCARD"}
+              onChange={(e) => setBankCode(e.target.value)}
+            />
+            Thanh toán qua thẻ quốc tế (Visa/Master/JCB)
+          </label>
+        </div>
 
-              <div className="space-y-2">
-                <Label>Mã CVV</Label>
-                <Input placeholder="***" type="password" />
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <div className="h-3 w-3 rounded-full border" />
-              Giao dịch của bạn được bảo mật và mã hóa.
-            </div>
-
-            <Button className="w-full" onClick={handleClickPay}>
-              Thanh Toán {totalText}
-            </Button>
-          </TabsContent>
-
-          {/* Các tab khác bạn có thể xử lý sau */}
-          <TabsContent value="ewallet">
-            <p className="text-sm text-muted-foreground">
-              Ví điện tử sẽ được hỗ trợ sau.
-            </p>
-          </TabsContent>
-
-          <TabsContent value="bank">
-            <p className="text-sm text-muted-foreground">
-              Internet Banking sẽ được hỗ trợ sau.
-            </p>
-          </TabsContent>
-        </Tabs>
+        {/* Button thanh toán */}
+        <Button
+          className="w-full mt-2"
+          onClick={handlePay}
+          disabled={createPayment.isPending}
+        >
+          {createPayment.isPending ? "Đang chuyển hướng..." : "Thanh toán"}
+        </Button>
       </CardContent>
     </Card>
   );
