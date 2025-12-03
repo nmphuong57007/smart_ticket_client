@@ -7,5 +7,7 @@ export const redirectConfig = {
   movieShowing: "/movie/movie-showing",
   upcomingMovies: "/movie/upcoming-movies",
   payment: "/payment",
-  
+
+  cinema: "/cinema",
+
 };
