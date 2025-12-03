@@ -1,4 +1,5 @@
 export interface SeatItem {
+   id: number; 
   code: string;
   type: "normal" | "vip";
   physical_status: "active" | "broken";
