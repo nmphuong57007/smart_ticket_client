@@ -8,6 +8,7 @@ import {
   Clapperboard,
   Clock,
   LogIn,
+  Building2
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,8 @@ const navItems = [
     icon: Clapperboard,
   },
   { href: redirectConfig.upcomingMovies, label: "Phim sắp chiếu", icon: Clock },
+  { href: redirectConfig.cinema, label: "Rạp chiếu", icon: Building2 },
+
 ];
 
 export default function Header() {
