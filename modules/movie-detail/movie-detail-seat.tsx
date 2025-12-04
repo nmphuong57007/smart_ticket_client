@@ -30,6 +30,8 @@ import type { PromotionItem } from "@/api/interfaces/discount-interface";
 import { redirectConfig } from "@/helpers/redirect-config";
 import { useRouter } from "next/navigation";
 import { usePromotions } from "@/api/hooks/use-promotions.ts";
+import { useCreatePayment } from "@/api/hooks/use-payment";
+
 
 interface MovieSeatMapProps {
   showtimeId: number;
@@ -53,6 +55,7 @@ export default function MovieSeatMap({
 
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
+  const createPayment = useCreatePayment();
   
 const getSeatId = (code: string): number | null => {
   const seat = flatSeats.find((s) => s.code === code);
@@ -456,7 +459,7 @@ const violatesOneGapFromBooked = (next: string[]) => {
       </CardContent>
 
       <CardFooter>
-       <Button
+      <Button
   disabled={selectedSeats.length === 0}
   className="w-full text-base py-6 mt-4"
   onClick={() =>
@@ -464,33 +467,42 @@ const violatesOneGapFromBooked = (next: string[]) => {
       {
         showtime_id: showtimeId,
 
-        // GHẾ: convert seat_code → seat_id (number)
         seats: selectedSeats
           .map(code => getSeatIdByCode(code))
           .filter((id): id is number => id !== null),
 
-
-        // COMBO: phải dùng qty (không phải quantity)
-        products:
-          combos.length > 0
-            ? combos.map((c) => ({
-                product_id: c.id,
-                qty: c.qty, // 🔥 FIX: backend yêu cầu "qty"
-              }))
-            : undefined,
+        products: combos.length
+          ? combos.map(c => ({
+              product_id: c.id,
+              qty: c.qty,
+            }))
+          : undefined,
 
         discount_code: discountCode || undefined,
       },
       {
         onSuccess: (res) => {
-            const bookingId = res.data.id;   // hoặc res.data.booking.id tùy backend
-            const total = finalTotal;        // total bạn đã tính trước đó
+          const bookingId = res.data.id;
 
-            router.push(`${redirectConfig.payment}?booking_id=${bookingId}&total=${total}`);
-          }
-          ,
+          // 👉 Gọi API thanh toán tiếp theo
+          createPayment.mutate(
+            { booking_id: bookingId },
+            {
+              onSuccess: (paymentUrl) => {
+                // paymentUrl = string do backend trả về
+                if (paymentUrl) {
+                  window.location.href = paymentUrl; // 🔥 NHẢY SANG VNPay
+                }
+              },
+              onError: (err) => console.error("Payment error:", err),
+            }
+          );
+          ;
+          ;
+        },
+
         onError: (err) => {
-          console.error(err);
+          console.error("Booking error:", err);
         },
       }
     )
@@ -498,6 +510,7 @@ const violatesOneGapFromBooked = (next: string[]) => {
 >
   Thanh Toán
 </Button>
+
 
       </CardFooter>
     </Card>
