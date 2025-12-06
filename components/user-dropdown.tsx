@@ -125,6 +125,12 @@ export default function UserDropdown({
         >
           Chỉnh sửa thông tin tài khoản
         </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => router.push(redirectConfig.bookingHistory)}
+          className="cursor-pointer"
+        >
+          Đơn vé đã đặt
+        </DropdownMenuItem>
 
         <DropdownMenuItem
           variant="destructive"
