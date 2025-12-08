@@ -33,6 +33,7 @@ export interface BookingDetailData {
   showtime: {
     id: number;
     time: string;
+    date: string;
     type: string | null;
   };
 

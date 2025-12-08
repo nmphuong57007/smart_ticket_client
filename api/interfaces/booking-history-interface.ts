@@ -8,7 +8,7 @@ export interface BookingItem {
   booking_date: string;
   payment_method: string;
   transaction_code: string;
-  total_amount: number;
+  final_amount: number;
 }
 
 export interface BookingListResponse {

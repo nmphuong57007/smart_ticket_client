@@ -3,7 +3,7 @@ export interface SeatItem {
   code: string;
   type: "normal" | "vip";
   physical_status: "active" | "broken";
-  status: "available" | "booked";
+  status: "available" | "booked" | "pending_payment";
   price: number;
 }
 

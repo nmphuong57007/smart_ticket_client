@@ -1,105 +1,123 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import Link from "next/link";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 import moment from "moment";
 
 import {
-  Ticket,
   Calendar,
-  Building2,
-  CreditCard,
+  MapPin,
   QrCode,
+  CreditCard,
   ArrowRight,
 } from "lucide-react";
+
 import { useBookingHistory } from "@/api/hooks/use-booking-history";
 import { redirectConfig } from "@/helpers/redirect-config";
 
 export default function BookingListPage() {
   const { data, isLoading } = useBookingHistory();
-
   const bookings = data?.data ?? [];
 
   return (
-    <div className="container mx-auto py-10 max-w-4xl">
-      <h1 className="text-2xl font-bold mb-6 text-center">
-        🎟️ Đơn Vé Đã Đặt
+    <div className="container mx-auto py-10 max-w-6xl">
+      <h1 className="text-3xl font-bold mb-10 text-center">
+        🎟️ Vé của tôi
       </h1>
 
-      {/* Loading */}
+      {/* ----------- LOADING ----------- */}
       {isLoading && (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-40 w-full rounded-xl" />
           ))}
         </div>
       )}
 
-      {/* Danh sách đơn */}
-      <div className="space-y-5">
+      {/* ----------- LIST ----------- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {!isLoading &&
           bookings.map((item) => (
             <Card
-              key={item.id}
-              className="shadow-md hover:shadow-xl transition-all border border-gray-200 dark:border-gray-700 rounded-2xl"
-            >
-              <CardContent className="p-5 flex flex-col sm:flex-row justify-between gap-5">
-                {/* LEFT CONTENT */}
-                <div className="space-y-2 flex-1">
-                  <p className="text-xl font-bold flex items-center gap-2">
-                    <Ticket className="w-5 h-5 text-primary" />
-                    {item.movie_title}
-                  </p>
+                key={item.id}
+                className="
+                  rounded-2xl p-6 border shadow-sm 
+                  bg-white text-gray-800 
+                  dark:bg-neutral-900 dark:text-neutral-200 dark:border-neutral-700
+                  hover:shadow-lg transition-all
 
-                  <p className="text-gray-600 dark:text-gray-400 flex gap-2 items-center text-sm">
-                    <Building2 className="w-4 h-4" />
+                  flex flex-col justify-between h-full
+                "
+              >
+                <div className="space-y-3 flex-1">
+                  <p className="text-xl font-semibold leading-tight">{item.movie_title}</p>
+
+                  <p className="flex items-center gap-2 text-sm text-gray-700 dark:text-neutral-400">
+                    <MapPin className="w-4 h-4" />
                     Rạp: <span className="font-medium">{item.cinema}</span>
                   </p>
 
-                  <p className="text-gray-600 dark:text-gray-400 flex gap-2 items-center text-sm">
+                  <p className="flex items-center gap-2 text-sm text-gray-700 dark:text-neutral-400">
                     <QrCode className="w-4 h-4" />
                     Mã đặt vé:{" "}
-                    <span className="font-semibold">{item.booking_code}</span>
-                  </p>
-
-                  <p className="text-gray-600 dark:text-gray-400 flex gap-2 items-center text-sm">
-                    <Calendar className="w-4 h-4" />
-                    Ngày đặt:{" "}
-                    {moment(item.booking_date).format("DD/MM/YYYY HH:mm")}
-                  </p>
-
-                  <div className="flex gap-2 items-center">
-                    <CreditCard className="w-4 h-4 text-gray-700 dark:text-gray-300" />
-                    <span
-                      className="px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
-                    >
-                      {item.payment_method.toUpperCase()}
+                    <span className="font-semibold text-primary dark:text-primary">
+                      {item.booking_code}
                     </span>
-                  </div>
+                  </p>
 
-                  <p className="font-semibold text-lg mt-2">
-                    {item.total_amount.toLocaleString()} đ
+                  <p className="flex items-center gap-2 text-sm text-gray-700 dark:text-neutral-400">
+                    <Calendar className="w-4 h-4" />
+                    Ngày đặt: {moment(item.booking_date).format("DD/MM/YYYY HH:mm")}
+                  </p>
+
+                  <p className="flex items-center gap-2 text-sm text-gray-700 dark:text-neutral-400">
+                    <CreditCard className="w-4 h-4" />
+                    Thanh toán:{" "}
+                    <span className="font-medium uppercase">
+                      {item.payment_method}
+                    </span>
+                  </p>
+
+                  {item.transaction_code && (
+                    <p className="flex items-center gap-2 text-sm text-gray-700 dark:text-neutral-400">
+                      <QrCode className="w-4 h-4" />
+                      Mã giao dịch:{" "}
+                      <span className="font-semibold">{item.transaction_code}</span>
+                    </p>
+                  )}
+
+                  <p className="font-bold text-lg pt-1">
+                    {item.final_amount.toLocaleString()} đ
                   </p>
                 </div>
 
-                {/* RIGHT AREA: BUTTON */}
-                <div className="flex items-center sm:items-end justify-between sm:flex-col gap-3">
-                  <Link
-                    href={redirectConfig.bookingHistoryDetail(item.id)}
-                    className="px-5 py-2 rounded-xl bg-primary text-white font-normal flex items-center gap-2 hover:bg-primary/80 transition"
-                  >
-                    Xem chi tiết
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </CardContent>
+                {/* BUTTON FIXED BOTTOM */}
+                <Link
+                  href={redirectConfig.bookingHistoryDetail(item.id)}
+                  className="
+                    w-full mt-4 px-4 py-2 rounded-xl
+                    flex items-center justify-center gap-2 text-sm font-medium
+
+                    bg-gray-100 text-gray-800 hover:bg-gray-200
+                    dark:bg-white/10 dark:text-white dark:hover:bg-white/20
+
+                    border border-transparent dark:border-white/10
+
+                    transition
+                  "
+                >
+                  Xem chi tiết
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
             </Card>
+
           ))}
       </div>
 
+      {/* ----------- EMPTY STATE ----------- */}
       {!isLoading && bookings.length === 0 && (
-        <p className="text-center text-gray-500 mt-10">
+        <p className="text-center text-gray-500 dark:text-neutral-400 mt-10">
           Bạn chưa có đơn vé nào.
         </p>
       )}

@@ -114,7 +114,7 @@ const movieId = showtime?.movie_id ?? null;
   };
 
   const toggleSeat = (seat: SeatItem) => {
-    if (seat.status === "booked" || seat.physical_status === "broken") return;
+    if (seat.status === "booked" || seat.physical_status === "broken" || seat.status === "pending_payment") return;
 
     const exists = selectedSeats.includes(seat.code);
     const next = exists
@@ -155,8 +155,13 @@ const movieId = showtime?.movie_id ?? null;
       return "bg-black text-white border border-black font-semibold dark:bg-[#F2C94C] dark:text-black dark:border-[#F2C94C]";
     }
 
+    if (seat.status === "pending_payment") {
+      return "bg-blue-200 text-blue-900 border border-blue-600 cursor-not-allowed dark:bg-blue-600 dark:text-white dark:border-blue-700";
+    }
+
+
     if (seat.type === "vip") {
-      return "bg-white border border-red-400 text-black dark:bg-[#F2F2F2] dark:border-white dark:text-black ;";
+      return "bg-red-200 border border-red-400 text-black dark:bg-[#F2F2F2] dark:border-white dark:text-black ;";
     }
 
     return "bg-white border border-gray-300 text-black hover:bg-gray-100 dark:bg-[#2D2A28] dark:border-[#3A3735] dark:text-white dark:hover:bg-[#3A3735]";
@@ -279,13 +284,43 @@ const applicablePromotions = useMemo(() => {
 
   return (
     <Card className="w-full max-w-md sticky top-20 shadow-lg rounded-xl">
-      <CardHeader>
-        <CardTitle className="text-center text-lg">Sơ Đồ Ghế Ngồi</CardTitle>
-      </CardHeader>
+   
 
       <CardContent className="space-y-4">
+        {/* --- MÀN HÌNH CHIẾU --- */}
+      <div className="flex flex-col items-center justify-center ">
+        {/* Container màn hình */}
+        <div
+          className="relative flex justify-center items-start pt-3"
+          style={{
+            width: '320px',    // Độ rộng màn hình
+            height: '50px',    // Chiều cao vùng gradient
+            
+            // TẠO HÌNH DÁNG CONG (Magic CSS):
+            // Radius ngang 50% (để cong đều 2 bên)
+            // Radius dọc 100% (để tạo độ vòm cao)
+            borderTopLeftRadius: '50% 50%',
+            borderTopRightRadius: '50% 50%',
+            
+            // Viền xanh đậm ở trên cùng
+            borderTop: '5px solid #1d4ed8', // blue-700
+            
+            // Gradient từ xanh cyan nhạt xuống trong suốt
+            background: 'linear-gradient(180deg, rgba(34, 211, 238, 0.4) 0%, rgba(255, 255, 255, 0) 100%)',
+            
+            // // Thêm chút bóng mờ phía trên để tạo cảm giác màn hình phát sáng (tùy chọn)
+            // boxShadow: '0 -5px 15px rgba(34, 211, 238, 0.3)'
+          }}
+        >
+          {/* Text */}
+          <span className="text-gray-600 font-bold tracking-[0.2em] text-sm uppercase">
+            Màn hình
+          </span>
+        </div>
+      </div>
+
         {/* Seat Map */}
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2 mt-10">
           {seatMap.map((row, rowIndex) => (
             <div key={rowIndex} className="flex gap-2">
               {row.map((seat) => {
@@ -294,7 +329,7 @@ const applicablePromotions = useMemo(() => {
                   <button
                     key={seat.code}
                     onClick={() => toggleSeat(seat)}
-                    disabled={seat.status === "booked"}
+                    disabled={seat.status === "booked" || seat.status === "pending_payment"}
                     className={`w-8 h-8 rounded flex items-center justify-center text-xs ${getSeatStyle(
                       seat,
                       isSelected
@@ -310,21 +345,34 @@ const applicablePromotions = useMemo(() => {
 
         {/* ==== LEGEND ==== */} 
         <div className="flex justify-center flex-wrap gap-4 text-xs mt-2"> 
-          {/* Ghế trống */} <div className="flex items-center gap-1"> 
+
+          {/* Ghế trống */} 
+          <div className="flex items-center gap-1"> 
             <div className=" w-4 h-4 rounded bg-white border border-gray-300 dark:bg-[#2D2A28] dark:border-[#3A3735] ">
               </div> Trống </div> 
+
           {/* Ghế đang chọn */} 
           <div className="flex items-center gap-1"> 
             <div className=" w-4 h-4 rounded bg-black dark:bg-[#F2C94C] ">
               </div> Đang chọn </div> 
+
           {/* Ghế đã đặt */} 
           <div className="flex items-center gap-1"> 
-            <div className=" w-4 h-4 rounded bg-gray-300 dark:bg-[#4A4A4A] ">
-              </div> Đã đặt </div> {/* Ghế VIP */} 
-              <div className="flex items-center gap-1"> 
-                <div className=" w-4 h-4 rounded bg-white border border-red-400 dark:bg-[#F2F2F2] dark:border-white ">
-                  </div> VIP </div> 
-                  </div>
+            <div className=" w-4 h-4 rounded bg-gray-300 dark:bg-[#4A4A4A] "></div>
+               Đã đặt 
+          </div> 
+
+          {/* Ghế VIP */} 
+          <div className="flex items-center gap-1"> 
+            <div className=" w-4 h-4 rounded bg-red-200 border border-red-400 text-black dark:bg-[#F2F2F2] dark:border-white dark:text-black  ">
+              </div> VIP </div> 
+
+          {/* Ghế chờ thanh toán */} 
+          <div className="flex items-center gap-1"> 
+            <div className=" w-4 h-4 rounded bg-blue-200 text-blue-900 border border-blue-600 cursor-not-allowed dark:bg-blue-600 dark:text-white dark:border-blue-700"></div>
+               Đang giữ 
+          </div> 
+        </div>
 
         {/* Warning */}
         {warningMsg && (
@@ -444,43 +492,47 @@ const applicablePromotions = useMemo(() => {
       </CardContent>
 
       <CardFooter>
-        <Button
-          disabled={selectedSeats.length === 0}
-          className="w-full py-6 text-base"
-          onClick={() =>
-            booking.mutate(
-              {
-                showtime_id: showtimeId,
-                seats: selectedSeats
-                  .map((code) => getSeatIdByCode(code))
-                  .filter((id): id is number => id !== null),
-                products: combos.length
-                  ? combos.map((c) => ({
-                      product_id: c.id,
-                      qty: c.qty,
-                    }))
-                  : undefined,
-                discount_code: discountCode || undefined,
-              },
-              {
-                onSuccess: (res) => {
-                  const bookingId = res.data.id;
-                  createPayment.mutate(
-                    { booking_id: bookingId },
-                    {
-                      onSuccess: (paymentUrl) => {
-                        if (paymentUrl) window.location.href = paymentUrl;
-                      },
-                    }
-                  );
-                },
-              }
-            )
-          }
-        >
-          Thanh Toán
-        </Button>
-      </CardFooter>
+
+
+    <Button
+      disabled={selectedSeats.length === 0}
+      className="w-full py-6 text-base"
+      onClick={() => {
+        const seatIds = selectedSeats
+          .map((code) => getSeatIdByCode(code))
+          .filter((id): id is number => id !== null);
+
+        const combosSelected = combos.filter(c => c.qty > 0);
+
+        const params = new URLSearchParams();
+
+        params.set("showtime_id", String(showtimeId));
+        params.set("seat_ids", seatIds.join(",")); 
+
+        // ✔ CHỈ GỬI combo_ids KHI THỰC SỰ CÓ COMBO
+        if (combosSelected.length > 0) {
+      params.set("combo_ids", combosSelected.map(c => c.id).join(","));
+
+      combosSelected.forEach(c => {
+        params.set(`combo_qty_${c.id}`, String(c.qty));  // 🔥 BẮT BUỘC
+      });
+    }
+
+        // ✔ CHỈ GỬI discount_code KHI NGƯỜI DÙNG THỰC SỰ NHẬP
+        if (discountCode && discountCode.trim() !== "") {
+          params.set("discount_code", discountCode.trim());
+        }
+
+        params.set("total", String(finalTotal));
+
+        window.location.href = `/ticketreview?${params.toString()}`;
+      }}
+    >
+      Xem Thông Tin Vé
+    </Button>
+
+</CardFooter>
+
     </Card>
   );
 }

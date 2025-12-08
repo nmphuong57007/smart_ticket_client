@@ -53,7 +53,7 @@ export default function BookingDetailPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
             <div className="space-y-2">
               <p><span className="font-medium">Phim:</span> {booking.movie.title}</p>
-              <p><span className="font-medium">Suất chiếu:</span> {booking.showtime.type || "Không có"}</p>
+              <p><span className="font-medium">Ngày chiếu:</span> {moment(booking.showtime.date).format("DD/MM/YYYY")}</p>
               <p><span className="font-medium">Giờ chiếu:</span> {booking.showtime.time}</p>
               <p><span className="font-medium">Ngày đặt:</span> {moment(booking.created_at).format("DD/MM/YYYY HH:mm")}</p>
               <p><span className="font-medium">Thời lượng:</span> {booking.movie.duration} phút</p>
