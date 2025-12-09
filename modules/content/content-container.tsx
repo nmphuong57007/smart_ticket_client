@@ -8,18 +8,33 @@ import { useContentDetail } from "@/api/hooks/use-content-detail";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ContentDetailRes } from "@/api/interfaces/content-interface";
 
+/* ========= COMMON ========= */
+
+type Item = ContentDetailRes["data"]["items"][number];
+
+const CARD_BASE =
+  "overflow-hidden rounded-2xl bg-white dark:bg-[#1a1a1a] shadow-md dark:shadow-lg transition-all duration-300";
+
+const MainWrapper = ({ children }: { children: React.ReactNode }) => (
+  <main className="min-h-screen bg-white text-black dark:bg-black dark:text-white transition-colors duration-300">
+    <section className="mx-auto w-full max-w-[1120px] px-4 md:px-0 py-10 md:py-12">
+      {children}
+    </section>
+  </main>
+);
+
+const formatApplyRange = (from?: string, to?: string) => {
+  if (!from || !to) return "";
+  const start = moment(from).format("DD/MM/YYYY");
+  const end = moment(to).format("DD/MM/YYYY");
+  return `${start} – ${end}`;
+};
+
+/* ========= MAIN COMPONENT ========= */
+
 export default function ContentContainer() {
   const { content, isLoading, isError } = useContentDetail();
 
-  const MainWrapper = ({ children }: { children: React.ReactNode }) => (
-    <main className="min-h-screen bg-white text-black dark:bg-black dark:text-white transition-colors duration-300">
-      <section className="mx-auto w-full max-w-[1120px] px-4 md:px-0 py-10 md:py-12">
-        {children}
-      </section>
-    </main>
-  );
-
-  // LOADING
   if (isLoading) {
     return (
       <MainWrapper>
@@ -31,7 +46,6 @@ export default function ContentContainer() {
     );
   }
 
-  // ERROR
   if (isError) {
     return (
       <MainWrapper>
@@ -42,7 +56,6 @@ export default function ContentContainer() {
     );
   }
 
-  // DATA (fallback mảng rỗng để tránh crash)
   const items = (content?.items ?? []) as ContentDetailRes["data"]["items"];
 
   const promotionItems = items.filter(
@@ -55,25 +68,11 @@ export default function ContentContainer() {
   return (
     <MainWrapper>
       <PromotionSection items={promotionItems} />
-
       <div className="mt-14">
         <SideNewsSection items={sideNewsItems} />
       </div>
     </MainWrapper>
   );
-}
-
-/* ========= TYPES ========= */
-
-type Item = ContentDetailRes["data"]["items"][number];
-
-/* ========= HELPERS ========= */
-
-function formatApplyRange(from?: string, to?: string) {
-  if (!from || !to) return "";
-  const start = moment(from).format("DD/MM/YYYY");
-  const end = moment(to).format("DD/MM/YYYY");
-  return `${start} – ${end}`;
 }
 
 /* ========= KHUYẾN MÃI MỚI ========= */
@@ -89,18 +88,15 @@ function PromotionSection({ items }: { items: Item[] }) {
         Khuyến mãi mới
       </h1>
 
-      {/* HÀNG TRÊN: hero bên trái + 2 tin nhỏ bên phải (giống Tin mới) */}
-      <div className="grid gap-6 md:grid-cols-3">
+      {/* 3 cột, 2 hàng – hero trái span 2 hàng */}
+      <div className="grid gap-6 md:grid-cols-3 md:grid-rows-2">
         {first && <HeroPromoCard item={first} />}
 
-        <div className="space-y-6">
-          {rest.slice(0, 2).map((item) => (
-            <SmallSideNews key={item.id} item={item} />
-          ))}
-        </div>
+        {rest.slice(0, 2).map((item) => (
+          <SmallSideNews key={item.id} item={item} />
+        ))}
       </div>
 
-      {/* Các tin khuyến mãi còn lại phía dưới */}
       {rest.length > 2 && (
         <div className="mt-6 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
           {rest.slice(2).map((item) => (
@@ -112,17 +108,15 @@ function PromotionSection({ items }: { items: Item[] }) {
   );
 }
 
-/* --- Box to bên trái: hero lớn, bo góc, có ngày áp dụng + thanh cam --- */
-
 function HeroPromoCard({ item }: { item: Item }) {
   const applyRange = formatApplyRange(item.published_at, item.unpublished_at);
 
   return (
-    <article className="md:col-span-2">
-      <Link href={`/content/${item.slug}`} className="group block">
-        <div className="overflow-hidden rounded-2xl bg-white dark:bg-[#1a1a1a] shadow-md dark:shadow-lg transition-all duration-300 group-hover:shadow-xl">
-          {/* Ảnh tỉ lệ 16:9 giống web Beta */}
-          <div className="relative aspect-[16/9] w-full">
+    <article className="md:col-span-2 md:row-span-2 h-full">
+      <Link href={`/content/${item.slug}`} className="group block h-full">
+        <div className={`${CARD_BASE} h-full group-hover:shadow-xl`}>
+          {/* h-full để cao bằng 2 box bên phải, min-h tránh bị thấp quá */}
+          <div className="relative w-full h-full min-h-[260px]">
             {item.image ? (
               <Image
                 src={item.image}
@@ -132,23 +126,19 @@ function HeroPromoCard({ item }: { item: Item }) {
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-xs text-gray-500 dark:text-gray-300">
-                Không có hình ảnh
-              </div>
+              <NoImageFallback />
             )}
 
-            {/* Dòng thời gian áp dụng, nằm sát trên thanh cam */}
             {applyRange && (
-              <div className="absolute inset-x-0 bottom-[44px] px-5 py-1">
+              <div className="absolute inset-x-0 bottom-[48px] px-5 py-1">
                 <p className="text-[13px] font-semibold italic text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]">
                   Chương trình áp dụng từ {applyRange}
                 </p>
               </div>
             )}
 
-            {/* Thanh cam + title trắng */}
             <div className="absolute inset-x-0 bottom-0 bg-[#f68b2c] px-5 py-3">
-              <h3 className="line-clamp-1 text-sm font-bold uppercase text-white">
+              <h3 className="line-clamp-2 text-sm font-bold uppercase text-white">
                 {item.title}
               </h3>
             </div>
@@ -159,7 +149,7 @@ function HeroPromoCard({ item }: { item: Item }) {
   );
 }
 
-/* ========= TIN MỚI (TIN BÊN LỀ) ========= */
+/* ========= TIN MỚI ========= */
 
 function SideNewsSection({ items }: { items: Item[] }) {
   if (!items.length) return null;
@@ -172,47 +162,15 @@ function SideNewsSection({ items }: { items: Item[] }) {
         Tin mới
       </h2>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Tin lớn bên trái */}
-        {first && (
-          <article className="md:col-span-2">
-            <Link href={`/content/${first.slug}`} className="group block">
-              <div className="overflow-hidden rounded-2xl bg-white dark:bg-[#1a1a1a] shadow-md dark:shadow-lg transition-all duration-300 group-hover:shadow-xl">
-                <div className="relative aspect-[16/9] w-full">
-                  {first.image ? (
-                    <Image
-                      src={first.image}
-                      alt={first.title}
-                      fill
-                      sizes="(min-width: 1024px) 66vw, 100vw"
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-xs text-gray-500 dark:text-gray-300">
-                      Không có hình ảnh
-                    </div>
-                  )}
+      {/* giống layout trên: hero span 2 hàng */}
+      <div className="grid gap-6 md:grid-cols-3 md:grid-rows-2">
+        {first && <HeroNewsCard item={first} />}
 
-                  <div className="absolute inset-x-0 bottom-0 bg-[#f68b2c] px-5 py-3">
-                    <h3 className="line-clamp-2 text-sm font-bold uppercase leading-snug text-white">
-                      {first.title}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </article>
-        )}
-
-        {/* 2 tin nhỏ bên phải */}
-        <div className="space-y-6">
-          {rest.slice(0, 2).map((item) => (
-            <SmallSideNews key={item.id} item={item} />
-          ))}
-        </div>
+        {rest.slice(0, 2).map((item) => (
+          <SmallSideNews key={item.id} item={item} />
+        ))}
       </div>
 
-      {/* Các tin nhỏ còn lại phía dưới */}
       {rest.length > 2 && (
         <div className="mt-6 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
           {rest.slice(2).map((item) => (
@@ -224,6 +182,38 @@ function SideNewsSection({ items }: { items: Item[] }) {
   );
 }
 
+function HeroNewsCard({ item }: { item: Item }) {
+  return (
+    <article className="md:col-span-2 md:row-span-2 h-full">
+      <Link href={`/content/${item.slug}`} className="group block h-full">
+        <div className={`${CARD_BASE} h-full group-hover:shadow-xl`}>
+          <div className="relative w-full h-full min-h-[260px]">
+            {item.image ? (
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                sizes="(min-width: 1024px) 66vw, 100vw"
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <NoImageFallback />
+            )}
+
+            <div className="absolute inset-x-0 bottom-0 bg-[#f68b2c] px-5 py-3">
+              <h3 className="line-clamp-2 text-sm font-bold uppercase leading-snug text-white">
+                {item.title}
+              </h3>
+            </div>
+          </div>
+        </div>
+      </Link>
+    </article>
+  );
+}
+
+/* ========= CARD NHỎ ========= */
+
 function SmallSideNews({ item }: { item: Item }) {
   const publishedDate = item.published_at
     ? moment(item.published_at).format("DD/MM/YYYY")
@@ -232,8 +222,9 @@ function SmallSideNews({ item }: { item: Item }) {
   return (
     <article>
       <Link href={`/content/${item.slug}`} className="group block">
-        <div className="overflow-hidden rounded-2xl bg-white dark:bg-[#1a1a1a] shadow-md dark:shadow-lg transition-all duration-300 group-hover:shadow-lg">
-          <div className="relative h-28 w-full">
+        <div className={`${CARD_BASE} group-hover:shadow-lg`}>
+          {/* Box nhỏ – chiều cao đã thu gọn */}
+          <div className="relative w-full h-24 sm:h-28 md:h-32">
             {item.image ? (
               <Image
                 src={item.image}
@@ -243,15 +234,15 @@ function SmallSideNews({ item }: { item: Item }) {
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-xs text-gray-500 dark:text-gray-300">
-                Không có hình ảnh
-              </div>
+              <NoImageFallback />
             )}
           </div>
         </div>
+
         <p className="mt-2 line-clamp-2 text-[11px] font-semibold leading-snug text-gray-900 dark:text-gray-100 group-hover:text-orange-500">
           {item.title}
         </p>
+
         {publishedDate && (
           <p className="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
             {publishedDate}
@@ -259,6 +250,14 @@ function SmallSideNews({ item }: { item: Item }) {
         )}
       </Link>
     </article>
+  );
+}
+
+function NoImageFallback() {
+  return (
+    <div className="flex h-full w-full items-center justify-center text-xs text-gray-500 dark:text-gray-300">
+      Không có hình ảnh
+    </div>
   );
 }
 
@@ -271,21 +270,23 @@ function SectionSkeleton({ title }: { title: string }) {
         {title}
       </h1>
 
-      {/* hero + 2 box phải */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2">
-          <Skeleton className="h-[220px] w-full rounded-2xl" />
+      {/* Skeleton theo layout 3 cột, 2 hàng, hero span 2 hàng */}
+      <div className="grid gap-6 md:grid-cols-3 md:grid-rows-2">
+        <div className="md:col-span-2 md:row-span-2">
+          <Skeleton className="h-full min-h-[260px] w-full rounded-2xl" />
         </div>
-        <div className="space-y-6">
-          <Skeleton className="h-[140px] w-full rounded-2xl" />
-          <Skeleton className="h-[140px] w-full rounded-2xl" />
-        </div>
+
+        <Skeleton className="h-24 sm:h-28 md:h-32 w-full rounded-2xl" />
+        <Skeleton className="h-24 sm:h-28 md:h-32 w-full rounded-2xl" />
       </div>
 
       {/* hàng dưới */}
       <div className="mt-6 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-28 w-full rounded-2xl" />
+          <Skeleton
+            key={i}
+            className="h-24 sm:h-28 md:h-32 w-full rounded-2xl"
+          />
         ))}
       </div>
     </section>
