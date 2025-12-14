@@ -32,6 +32,7 @@ const navItems = [
     { href: redirectConfig.content, label: "Tin mới và ưu đãi", icon: Building2 },
 
 
+
 ];
 
 export default function Header() {

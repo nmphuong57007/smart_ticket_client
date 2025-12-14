@@ -53,55 +53,59 @@ export default function MovieDetailCombo({
             const qty = quantities[combo.id] ?? 0;
 
             return (
-              <Card key={combo.id} className="overflow-hidden">
-                <div className="grid grid-cols-[auto,1fr]">
-                  <div className="relative w-32 md:w-40 lg:w-48 h-full">
-                    <Image
-                      src={combo.image}
-                      alt={combo.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+             <Card key={combo.id} className="overflow-hidden p-3">
+            <div className="flex gap-4">
 
-                  <CardContent className="flex flex-col justify-between">
-                    <div>
-                      <p className="text-base font-semibold md:text-lg">
-                        {combo.name}
-                      </p>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {combo.description}
-                      </p>
-                    </div>
+              {/* === ẢNH BÊN TRÁI — KHUNG CỨNG === */}
+              <div className="relative w-[90px] h-[120px] rounded-lg overflow-hidden flex-shrink-0">
+                <Image
+                  src={combo.image}
+                  alt={combo.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
 
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="font-semibold">
-                        {combo.price.toLocaleString("vi-VN")}đ
-                      </span>
-
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          onClick={() => handleChange(combo.id, -1)}
-                        >
-                          -
-                        </Button>
-
-                        <span className="w-8 text-center">{qty}</span>
-
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          onClick={() => handleChange(combo.id, 1)}
-                        >
-                          +
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
+              {/* === NỘI DUNG BÊN PHẢI === */}
+              <CardContent className="flex flex-col justify-between p-0 flex-grow">
+                <div>
+                  <p className="text-base font-semibold md:text-lg">
+                    {combo.name}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                    {combo.description}
+                  </p>
                 </div>
-              </Card>
+
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="font-semibold text-primary">
+                    {combo.price.toLocaleString("vi-VN")}đ
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => handleChange(combo.id, -1)}
+                    >
+                      -
+                    </Button>
+
+                    <span className="w-8 text-center">{qty}</span>
+
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => handleChange(combo.id, 1)}
+                    >
+                      +
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </div>
+          </Card>
+
             );
           })}
         </div>

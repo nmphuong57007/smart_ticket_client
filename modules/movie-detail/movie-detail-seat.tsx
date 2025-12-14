@@ -3,8 +3,10 @@
 import { useSeatMap } from "@/api/hooks/use-seat-map";
 import { usePromotionApply } from "@/api/hooks/use-promotion-apply";
 import { useBooking } from "@/api/hooks/use-booking";
+import { useCreatePayment } from "@/api/hooks/use-payment";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+
 
 import {
   Card,
@@ -25,13 +27,9 @@ import {
 
 import type { SeatItem } from "@/api/interfaces/seat-map-interface";
 import type { SelectedCombo } from "@/api/interfaces/product-interface";
-import type { PromotionItem } from "@/api/interfaces/discount-interface";
-
-import { redirectConfig } from "@/helpers/redirect-config";
-import { useRouter } from "next/navigation";
 import { usePromotions } from "@/api/hooks/use-promotions.ts";
-import { useCreatePayment } from "@/api/hooks/use-payment";
-
+import { PromotionItem } from "@/api/interfaces/discount-interface";
+import { useShowtimeDetail } from "@/api/hooks/use-showtime-detail";
 
 interface MovieSeatMapProps {
   showtimeId: number;
@@ -44,92 +42,65 @@ export default function MovieSeatMap({
   showtimeText,
   combos,
 }: MovieSeatMapProps) {
-  const router = useRouter();
-
-  /* ======================
-        FETCH SEAT MAP
-  ======================= */
+  /* ====================== FETCH SEAT MAP ====================== */
   const { data, isLoading } = useSeatMap(showtimeId);
   const seatMap: SeatItem[][] = useMemo(() => data?.seat_map ?? [], [data]);
-  const flatSeats = seatMap.flat();
+  const { data: showtime } = useShowtimeDetail(showtimeId);
 
+const movieId = showtime?.movie_id ?? null;
+
+  const flatSeats = seatMap.flat();
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
+
   const createPayment = useCreatePayment();
-  
-const getSeatId = (code: string): number | null => {
-  const seat = flatSeats.find((s) => s.code === code);
-  return seat ? seat.id : null;
-};
-const seatIds = selectedSeats
-  .map((code) => getSeatId(code))
-  .filter((id): id is number => id !== null); // TS type predicate
 
-const getSeatIdByCode = (code: string): number | null => {
-  const seat = flatSeats.find(s => s.code === code);
-  return seat ? seat.id : null;
-};
-
-
-
+  const getSeatIdByCode = (code: string): number | null => {
+    const seat = flatSeats.find((s) => s.code === code);
+    return seat ? seat.id : null;
+  };
 
   const seatNum = (code: string) => parseInt(code.replace(/\D/g, ""));
 
-  const getSeatStatus = (code: string) =>
-    flatSeats.find((s) => s.code === code);
+  /* ====================== SELECT RULES ====================== */
 
-  /* ======================================================
-      RULE 1: Giới hạn tối đa 8 ghế
-  ====================================================== */
   const violatesMaxSeatLimit = (next: string[]) => next.length > 8;
 
-  /* ======================================================
-      RULE 2: Không để ghế trống cạnh ghế đã bán
-  ====================================================== */
-const violatesOneGapFromBooked = (next: string[]) => {
-  for (const row of seatMap) {
-    const rowCodes = row.map((s) => s.code);
+  const violatesOneGapFromBooked = (next: string[]) => {
+    for (const row of seatMap) {
+      const rowCodes = row.map((s) => s.code);
 
-    for (let i = 0; i < row.length; i++) {
-      if (row[i].status !== "booked") continue;
+      for (let i = 0; i < row.length; i++) {
+        if (row[i].status !== "booked") continue;
 
-      const bookedIndex = i;
+        const bookedIndex = i;
 
-      for (const code of next) {
-        const selectedIndex = rowCodes.indexOf(code);
-        if (selectedIndex === -1) continue;
+        for (const code of next) {
+          const selectedIndex = rowCodes.indexOf(code);
+          if (selectedIndex === -1) continue;
 
-        const distance = Math.abs(selectedIndex - bookedIndex);
+          const distance = Math.abs(selectedIndex - bookedIndex);
 
-        // ❌ chỉ cấm khi cách đúng 1 ghế
-        if (distance === 2) {
-          const middleIndex =
-            selectedIndex < bookedIndex
-              ? selectedIndex + 1
-              : selectedIndex - 1;
+          if (distance === 2) {
+            const middleIndex =
+              selectedIndex < bookedIndex
+                ? selectedIndex + 1
+                : selectedIndex - 1;
 
-          const middleSeat = row[middleIndex];
+            const middleSeat = row[middleIndex];
 
-          // ❗ GHẾ GIỮA chỉ bị coi là trống nếu:
-          // - middleSeat.available
-          // - middleSeat KHÔNG nằm trong danh sách ghế đang chọn
-          const middleIsEmpty =
-            middleSeat.status === "available" &&
-            !next.includes(middleSeat.code);
+            const middleIsEmpty =
+              middleSeat.status === "available" &&
+              !next.includes(middleSeat.code);
 
-          if (middleIsEmpty) return true;
+            if (middleIsEmpty) return true;
+          }
         }
       }
     }
-  }
-  return false;
-};
+    return false;
+  };
 
-
-  /* ======================================================
-      RULE 3: Không để ghế trống cô lập giữa 2 ghế đã chọn
-         Ví dụ chọn 7 và 9 thì không được bỏ ghế 8
-  ====================================================== */
   const violatesSingleGapBetweenSelected = (next: string[]) => {
     const sortedNums = next.map(seatNum).sort((a, b) => a - b);
 
@@ -143,11 +114,8 @@ const violatesOneGapFromBooked = (next: string[]) => {
     return false;
   };
 
-  /* ======================================================
-      TOGGLE SEAT
-  ====================================================== */
   const toggleSeat = (seat: SeatItem) => {
-    if (seat.status === "booked" || seat.physical_status === "broken") return;
+    if (seat.status === "booked" || seat.physical_status === "broken" || seat.status === "pending_payment") return;
 
     const exists = selectedSeats.includes(seat.code);
     const next = exists
@@ -164,9 +132,8 @@ const violatesOneGapFromBooked = (next: string[]) => {
       return;
     }
 
-
     if (violatesSingleGapBetweenSelected(next)) {
-      setWarningMsg("❌ Không được để ghế trống cô lập giữa hai ghế.");
+      setWarningMsg("❌ Không được để ghế trống ở giữa hai ghế.");
       return;
     }
 
@@ -174,85 +141,110 @@ const violatesOneGapFromBooked = (next: string[]) => {
     setSelectedSeats(next);
   };
 
-  /* ======================
-      STYLE GHẾ THEO THEME
-  ======================= */
+  /* ====================== SEAT STYLE ====================== */
+
   const getSeatStyle = (seat: SeatItem, isSelected: boolean) => {
     if (seat.status === "booked") {
-      return `
-        bg-gray-300 text-gray-600 border border-gray-400 cursor-not-allowed
-        dark:bg-[#4A4A4A] dark:text-[#BBBBBB] dark:border-[#4A4A4A]
-      `;
+      return "bg-gray-300 text-gray-600 border border-gray-400 cursor-not-allowed dark:bg-[#4A4A4A] dark:text-[#BBBBBB] dark:border-[#4A4A4A] ;";
     }
 
     if (seat.physical_status === "broken") {
-      return `
-        bg-transparent border border-red-400 cursor-not-allowed
-        dark:border-red-500
-      `;
+      return "bg-transparent border border-red-400 cursor-not-allowed dark:border-red-500";
     }
 
     if (isSelected) {
-      return `
-        bg-black text-white border border-black font-semibold
-        dark:bg-[#F2C94C] dark:text-black dark:border-[#F2C94C]
-      `;
+      return "bg-black text-white border border-black font-semibold dark:bg-[#F2C94C] dark:text-black dark:border-[#F2C94C]";
     }
+
+    if (seat.status === "pending_payment") {
+      return "bg-blue-200 text-blue-900 border border-blue-600 cursor-not-allowed dark:bg-blue-600 dark:text-white dark:border-blue-700";
+    }
+
 
     if (seat.type === "vip") {
-      return `
-        bg-white border border-red-400 text-black
-        dark:bg-[#F2F2F2] dark:border-white dark:text-black
-      `;
+      return "bg-red-200 border border-red-400 text-black dark:bg-[#F2F2F2] dark:border-white dark:text-black ;";
     }
 
-    return `
-      bg-white border border-gray-300 text-black hover:bg-gray-100
-      dark:bg-[#2D2A28] dark:border-[#3A3735] dark:text-white dark:hover:bg-[#3A3735]
-    `;
+    return "bg-white border border-gray-300 text-black hover:bg-gray-100 dark:bg-[#2D2A28] dark:border-[#3A3735] dark:text-white dark:hover:bg-[#3A3735]";
   };
 
-  /* ======================
-      DISCOUNT
-  ======================= */
+  /* ====================== PROMOTIONS ====================== */
+
   const { data: promoData } = usePromotions();
   const promotionApply = usePromotionApply();
   const booking = useBooking();
 
-  const activePromotions: PromotionItem[] =
-    promoData?.data.filter((p) => p.is_valid && !p.is_expired) ?? [];
+  // Lọc mã hợp lệ theo phim
+const applicablePromotions = useMemo(() => {
+  if (!promoData?.data || !movieId) return [];
+
+  return promoData.data.filter(
+    (p) =>
+      p.is_valid &&
+      !p.is_expired &&
+      (p.apply_for_all_movies || p.movie_id === movieId)
+  );
+}, [promoData, movieId]);
+
 
   const [discountCode, setDiscountCode] = useState("");
-  const [discountPercent, setDiscountPercent] = useState(0);
+  const [selectedPromotion, setSelectedPromotion] =
+    useState<PromotionItem | null>(null);
 
+  // Auto apply mã riêng theo phim
+  useEffect(() => {
+    const auto = applicablePromotions.find(
+      (p) => p.movie_id === movieId && !p.apply_for_all_movies
+    );
+
+    if (auto) {
+      setDiscountCode(auto.code);
+      setSelectedPromotion(auto);
+    }
+  }, [applicablePromotions, movieId]);
+
+  // Nhập mã thủ công
   const handleDiscountInput = (value: string) => {
     setDiscountCode(value);
 
-    const match = activePromotions.find(
+    const promo = applicablePromotions.find(
       (p) => p.code.toUpperCase() === value.trim().toUpperCase()
     );
 
-    setDiscountPercent(match ? match.discount_percent : 0);
+    setSelectedPromotion(promo ?? null);
   };
 
+  // Áp mã
   const handleApplyDiscount = () => {
-    if (!discountCode.trim()) {
-      setDiscountPercent(0);
+    const promo = applicablePromotions.find(
+      (p) => p.code.toUpperCase() === discountCode.trim().toUpperCase()
+    );
+
+    if (!promo) {
+      setSelectedPromotion(null);
       return;
     }
 
     promotionApply.mutate(
-      { code: discountCode.trim() },
       {
-        onSuccess: (res) =>
-          setDiscountPercent(res.valid ? res.discount_percent : 0),
+        code: promo.code,
+        movie_id: movieId!,
+        total_amount: seatTotal + comboTotal,
+      },
+      {
+        onSuccess: (res) => {
+          if (res.valid) {
+            setSelectedPromotion(promo);
+          } else {
+            setSelectedPromotion(null);
+          }
+        },
       }
     );
   };
 
-  /* ======================
-      TOTAL PRICE
-  ======================= */
+  /* ====================== TOTAL PRICE ====================== */
+
   const seatTotal = useMemo(() => {
     return flatSeats
       .filter((s) => selectedSeats.includes(s.code))
@@ -264,35 +256,82 @@ const violatesOneGapFromBooked = (next: string[]) => {
     [combos]
   );
 
-  const discountValue = (seatTotal + comboTotal) * (discountPercent / 100);
-  const finalTotal = seatTotal + comboTotal - discountValue;
+  const discountValue = useMemo(() => {
+    if (!selectedPromotion) return 0;
+
+    const total = seatTotal + comboTotal;
+
+    if (total < selectedPromotion.min_order_amount) return 0;
+
+    if (selectedPromotion.type === "percent") {
+      const raw = (total * selectedPromotion.discount_percent) / 100;
+      return selectedPromotion.max_discount_amount
+        ? Math.min(raw, selectedPromotion.max_discount_amount)
+        : raw;
+    }
+
+    if (selectedPromotion.type === "money") {
+      return selectedPromotion.discount_amount;
+    }
+
+    return 0;
+  }, [selectedPromotion, seatTotal, comboTotal]);
+
+  const finalTotal = Math.max(0, seatTotal + comboTotal - discountValue);
 
   if (isLoading) return <p>Đang tải sơ đồ ghế...</p>;
 
-  /* ======================
-          UI
-  ======================= */
+  /* ====================== UI RENDER ====================== */
 
   return (
     <Card className="w-full max-w-md sticky top-20 shadow-lg rounded-xl">
-      <CardHeader>
-        <CardTitle className="text-center text-lg">Sơ Đồ Ghế Ngồi</CardTitle>
-      </CardHeader>
+   
 
       <CardContent className="space-y-4">
-        {/* ===== SEAT MAP ===== */}
-        <div className="flex flex-col items-center gap-2">
+        {/* --- MÀN HÌNH CHIẾU --- */}
+      <div className="flex flex-col items-center justify-center ">
+        {/* Container màn hình */}
+        <div
+          className="relative flex justify-center items-start pt-3"
+          style={{
+            width: '320px',    // Độ rộng màn hình
+            height: '50px',    // Chiều cao vùng gradient
+            
+            // TẠO HÌNH DÁNG CONG (Magic CSS):
+            // Radius ngang 50% (để cong đều 2 bên)
+            // Radius dọc 100% (để tạo độ vòm cao)
+            borderTopLeftRadius: '50% 50%',
+            borderTopRightRadius: '50% 50%',
+            
+            // Viền xanh đậm ở trên cùng
+            borderTop: '5px solid #1d4ed8', // blue-700
+            
+            // Gradient từ xanh cyan nhạt xuống trong suốt
+            background: 'linear-gradient(180deg, rgba(34, 211, 238, 0.4) 0%, rgba(255, 255, 255, 0) 100%)',
+            
+            // // Thêm chút bóng mờ phía trên để tạo cảm giác màn hình phát sáng (tùy chọn)
+            // boxShadow: '0 -5px 15px rgba(34, 211, 238, 0.3)'
+          }}
+        >
+          {/* Text */}
+          <span className="text-gray-600 font-bold tracking-[0.2em] text-sm uppercase">
+            Màn hình
+          </span>
+        </div>
+      </div>
+
+        {/* Seat Map */}
+        <div className="flex flex-col items-center gap-2 mt-10">
           {seatMap.map((row, rowIndex) => (
             <div key={rowIndex} className="flex gap-2">
               {row.map((seat) => {
                 const isSelected = selectedSeats.includes(seat.code);
-
                 return (
                   <button
                     key={seat.code}
                     onClick={() => toggleSeat(seat)}
-                    disabled={seat.status === "booked"}
-                    className={`w-8 h-8 flex items-center justify-center rounded text-xs transition-all ${getSeatStyle(
+                    disabled={seat.status === "booked" || seat.status === "pending_payment"}
+                    className={`w-8 h-8 rounded flex items-center justify-center text-xs ${getSeatStyle(
                       seat,
                       isSelected
                     )}`}
@@ -305,61 +344,47 @@ const violatesOneGapFromBooked = (next: string[]) => {
           ))}
         </div>
 
-        {/* ==== LEGEND ==== */}
-          <div className="flex justify-center flex-wrap gap-4 text-xs mt-2">
+        {/* ==== LEGEND ==== */} 
+        <div className="flex justify-center flex-wrap gap-4 text-xs mt-2"> 
 
-            {/* Ghế trống */}
-            <div className="flex items-center gap-1">
-              <div className="
-                w-4 h-4 rounded 
-                bg-white border border-gray-300 
-                dark:bg-[#2D2A28] dark:border-[#3A3735]
-              "></div>
-              Trống
-            </div>
+          {/* Ghế trống */} 
+          <div className="flex items-center gap-1"> 
+            <div className=" w-4 h-4 rounded bg-white border border-gray-300 dark:bg-[#2D2A28] dark:border-[#3A3735] ">
+              </div> Trống </div> 
 
-            {/* Ghế đang chọn */}
-            <div className="flex items-center gap-1">
-              <div className="
-                w-4 h-4 rounded bg-black 
-                dark:bg-[#F2C94C]
-              "></div>
-              Đang chọn
-            </div>
+          {/* Ghế đang chọn */} 
+          <div className="flex items-center gap-1"> 
+            <div className=" w-4 h-4 rounded bg-black dark:bg-[#F2C94C] ">
+              </div> Đang chọn </div> 
 
-            {/* Ghế đã đặt */}
-            <div className="flex items-center gap-1">
-              <div className="
-                w-4 h-4 rounded
-                bg-gray-300 
-                dark:bg-[#4A4A4A]
-              "></div>
-              Đã đặt
-            </div>
+          {/* Ghế đã đặt */} 
+          <div className="flex items-center gap-1"> 
+            <div className=" w-4 h-4 rounded bg-gray-300 dark:bg-[#4A4A4A] "></div>
+               Đã đặt 
+          </div> 
 
-            {/* Ghế VIP */}
-            <div className="flex items-center gap-1">
-              <div className="
-                w-4 h-4 rounded 
-                bg-white border border-red-400 
-                dark:bg-[#F2F2F2] dark:border-white
-              "></div>
-              VIP
-            </div>
+          {/* Ghế VIP */} 
+          <div className="flex items-center gap-1"> 
+            <div className=" w-4 h-4 rounded bg-red-200 border border-red-400 text-black dark:bg-[#F2F2F2] dark:border-white dark:text-black  ">
+              </div> VIP </div> 
 
-          </div>
+          {/* Ghế chờ thanh toán */} 
+          <div className="flex items-center gap-1"> 
+            <div className=" w-4 h-4 rounded bg-blue-200 text-blue-900 border border-blue-600 cursor-not-allowed dark:bg-blue-600 dark:text-white dark:border-blue-700"></div>
+               Đang giữ 
+          </div> 
+        </div>
 
-
-        {/* ===== WARNING ===== */}
+        {/* Warning */}
         {warningMsg && (
-          <div className="p-2 bg-red-100 border border-red-300 text-red-700 rounded text-sm">
+          <div className="p-2 text-sm bg-red-100 border border-red-300 text-red-700 rounded">
             {warningMsg}
           </div>
         )}
 
         <Separator />
 
-        {/* ===== ORDER PREVIEW ===== */}
+        {/* Order Summary */}
         <div className="text-sm space-y-2">
           <div className="flex justify-between">
             <span>Suất chiếu:</span>
@@ -387,13 +412,13 @@ const violatesOneGapFromBooked = (next: string[]) => {
 
         <Separator />
 
-        {/* ===== DISCOUNT UI ===== */}
+        {/* Promotion */}
         <div className="space-y-2">
           <span className="text-sm font-medium">Mã giảm giá</span>
 
           <div className="flex gap-2">
             <Input
-              placeholder="Nhập mã…"
+              placeholder="Nhập mã…" 
               value={discountCode}
               onChange={(e) => handleDiscountInput(e.target.value)}
             />
@@ -409,20 +434,19 @@ const violatesOneGapFromBooked = (next: string[]) => {
 
               <PopoverContent className="w-60 p-3 rounded-xl shadow-lg border border-gray-200 dark:border-[#3A3735] bg-white dark:bg-[#1F1D1B]">
                 <p className="text-sm font-semibold mb-2 dark:text-white">
-                  Mã đang hoạt động
+                  Mã áp dụng được
                 </p>
 
                 <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                  {activePromotions.map((p) => {
+                  {applicablePromotions.map((p) => {
                     const isSelected =
-                      discountCode.toUpperCase() === p.code.toUpperCase();
-
+                      p.code.toUpperCase() === discountCode.toUpperCase();
                     return (
                       <div
                         key={p.id}
                         onClick={() => {
                           setDiscountCode(p.code);
-                          setDiscountPercent(p.discount_percent);
+                          setSelectedPromotion(p);
                         }}
                         className={`p-3 rounded-lg cursor-pointer border transition-all select-none ${
                           isSelected
@@ -430,12 +454,22 @@ const violatesOneGapFromBooked = (next: string[]) => {
                             : "bg-white dark:bg-[#1F1D1B] border-gray-200 dark:border-[#3A3735] hover:bg-gray-100 dark:hover:bg-[#2C2A28]"
                         }`}
                       >
-                        <p className="font-semibold dark:text-white">
-                          {p.code}
+                        <p className="font-semibold dark:text-white">{p.code}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {p.type === "percent"
+                            ? `Giảm ${p.discount_percent}%`
+                            : `Giảm ${p.discount_amount.toLocaleString(
+                                "vi-VN"
+                              )}đ`}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Giảm {p.discount_percent}%
+                           {typeof p.min_order_amount === "number" && (
+                            <p>
+                              Đơn tối thiểu: {p.min_order_amount.toLocaleString("vi-VN")}đ
+                            </p>
+                          )}
                         </p>
+
                       </div>
                     );
                   })}
@@ -444,75 +478,61 @@ const violatesOneGapFromBooked = (next: string[]) => {
             </Popover>
           </div>
 
-          {discountPercent > 0 && (
+          {selectedPromotion && (
             <p className="text-green-600 text-sm">
-              ✔ Giảm {discountPercent}% đã được áp dụng
+              ✔ Đã áp dụng: {selectedPromotion.code}
             </p>
           )}
         </div>
 
-        {/* ===== TOTAL ===== */}
-        <div className="flex justify-between text-base font-semibold mt-4">
+        {/* Total */}
+        <div className="flex justify-between font-semibold text-base mt-4">
           <span>Tổng tiền:</span>
           <span>{finalTotal.toLocaleString("vi-VN")}đ</span>
         </div>
       </CardContent>
 
       <CardFooter>
-      <Button
-  disabled={selectedSeats.length === 0}
-  className="w-full text-base py-6 mt-4"
-  onClick={() =>
-    booking.mutate(
-      {
-        showtime_id: showtimeId,
 
-        seats: selectedSeats
-          .map(code => getSeatIdByCode(code))
-          .filter((id): id is number => id !== null),
+    <Button
+      disabled={selectedSeats.length === 0}
+      className="w-full py-6 text-base"
+      onClick={() => {
+        const seatIds = selectedSeats
+          .map((code) => getSeatIdByCode(code))
+          .filter((id): id is number => id !== null);
 
-        products: combos.length
-          ? combos.map(c => ({
-              product_id: c.id,
-              qty: c.qty,
-            }))
-          : undefined,
+        const combosSelected = combos.filter(c => c.qty > 0);
 
-        discount_code: discountCode || undefined,
-      },
-      {
-        onSuccess: (res) => {
-          const bookingId = res.data.id;
+        const params = new URLSearchParams();
 
-          // 👉 Gọi API thanh toán tiếp theo
-          createPayment.mutate(
-            { booking_id: bookingId },
-            {
-              onSuccess: (paymentUrl) => {
-                // paymentUrl = string do backend trả về
-                if (paymentUrl) {
-                  window.location.href = paymentUrl; // 🔥 NHẢY SANG VNPay
-                }
-              },
-              onError: (err) => console.error("Payment error:", err),
-            }
-          );
-          ;
-          ;
-        },
+        params.set("showtime_id", String(showtimeId));
+        params.set("seat_ids", seatIds.join(",")); 
 
-        onError: (err) => {
-          console.error("Booking error:", err);
-        },
-      }
-    )
-  }
->
-  Thanh Toán
-</Button>
+        // ✔ CHỈ GỬI combo_ids KHI THỰC SỰ CÓ COMBO
+        if (combosSelected.length > 0) {
+      params.set("combo_ids", combosSelected.map(c => c.id).join(","));
 
+      combosSelected.forEach(c => {
+        params.set(`combo_qty_${c.id}`, String(c.qty));  // 🔥 BẮT BUỘC
+      });
+    }
 
-      </CardFooter>
+        // ✔ CHỈ GỬI discount_code KHI NGƯỜI DÙNG THỰC SỰ NHẬP
+        if (discountCode && discountCode.trim() !== "") {
+          params.set("discount_code", discountCode.trim());
+        }
+
+        params.set("total", String(finalTotal));
+
+        window.location.href = `/ticketreview?${params.toString()}`;
+      }}
+    >
+      Xem Thông Tin Vé
+    </Button>
+
+</CardFooter>
+
     </Card>
   );
 }

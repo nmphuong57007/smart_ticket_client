@@ -12,3 +12,4 @@ export const redirectConfig = {
   cinema: "/cinema",
   content: "/content",
 };
+

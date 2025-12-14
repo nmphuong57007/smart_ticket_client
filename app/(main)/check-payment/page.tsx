@@ -39,11 +39,14 @@ const CheckPayment = () => {
         <div className="p-8 text-center">
           <p className="text-gray-700">{message}</p>
 
-          {orderCode && (
+          <p>Kiểm tra thông tin vé đã đặt tại Đơn vé đã đặt</p>
+
+          {/* {orderCode && (
             <div className="mt-4 p-2 bg-gray-100 rounded-lg">
               <span className="font-semibold">Mã đơn hàng:</span> {orderCode}
             </div>
-          )}
+          )} */}
+
         </div>
 
       </div>
