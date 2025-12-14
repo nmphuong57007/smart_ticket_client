@@ -7,6 +7,7 @@ import { useCreatePayment } from "@/api/hooks/use-payment";
 
 import { useMemo, useState, useEffect } from "react";
 
+
 import {
   Card,
   CardContent,
@@ -47,7 +48,6 @@ export default function MovieSeatMap({
   const { data: showtime } = useShowtimeDetail(showtimeId);
 
 const movieId = showtime?.movie_id ?? null;
-
 
   const flatSeats = seatMap.flat();
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
@@ -107,6 +107,7 @@ const movieId = showtime?.movie_id ?? null;
     for (let i = 0; i < sortedNums.length - 1; i++) {
       if (sortedNums[i + 1] - sortedNums[i] === 2) {
         const missing = sortedNums[i] + 1;
+
         if (!sortedNums.includes(missing)) return true;
       }
     }
@@ -492,7 +493,6 @@ const applicablePromotions = useMemo(() => {
       </CardContent>
 
       <CardFooter>
-
 
     <Button
       disabled={selectedSeats.length === 0}
