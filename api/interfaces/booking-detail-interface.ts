@@ -1,14 +1,17 @@
 export interface BookingSeat {
+
   id: number;
   seat_code: string;
   type: string;
   price: number;
+
 }
 
 export interface BookingProduct {
   name: string;
   quantity: number;
   price: string;
+
 }
 
 export interface BookingDetailData {
