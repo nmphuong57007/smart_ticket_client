@@ -15,7 +15,7 @@ const banner_images = [
   "https://assets.glxplay.io/staticv2/Artboard%202-1762407785.jpg",
   "https://assets.glxplay.io/staticv2/Artboard%202-1762407785.jpg",
   "https://assets.glxplay.io/staticv2/Artboard%202-1762407785.jpg",
-  "https://simg.zalopay.com.vn/zlp-website/assets/1x_CGV_Feb_9_K_0b2c54b7e2.jpg",
+  // "https://simg.zalopay.com.vn/zlp-website/assets/1x_CGV_Feb_9_K_0b2c54b7e2.jpg",
 ];
 
 export default function HomeBanner() {
