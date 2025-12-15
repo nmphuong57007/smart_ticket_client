@@ -382,7 +382,7 @@ const applicablePromotions = useMemo(() => {
         )}
 
         <Separator />
-
+        
         {/* Order Summary */}
         <div className="text-sm space-y-2">
           <div className="flex justify-between">

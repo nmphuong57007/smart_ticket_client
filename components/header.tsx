@@ -29,6 +29,9 @@ const navItems = [
   },
   { href: redirectConfig.upcomingMovies, label: "Phim sắp chiếu", icon: Clock },
   { href: redirectConfig.cinema, label: "Rạp chiếu", icon: Building2 },
+  { href: redirectConfig.content, label: "Tin mới và ưu đãi", icon: Building2 },
+
+
 
 ];
 
