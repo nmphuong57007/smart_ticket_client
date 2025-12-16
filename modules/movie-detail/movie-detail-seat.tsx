@@ -485,7 +485,7 @@ const applicablePromotions = useMemo(() => {
         </div>
 
         {/* Total */}
-        <div className="flex justify-between font-semibold text-base mt-4">
+        <div className="flex justify-between font-semibold text-base mt-4 text-red-500">
           <span>Tổng tiền:</span>
           <span>{finalTotal.toLocaleString("vi-VN")}đ</span>
         </div>
