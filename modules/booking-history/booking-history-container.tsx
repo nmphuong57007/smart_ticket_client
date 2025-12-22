@@ -8,7 +8,6 @@ import moment from "moment";
 import {
   Calendar,
   MapPin,
-  QrCode,
   CreditCard,
   ArrowRight,
 } from "lucide-react";
@@ -18,7 +17,14 @@ import { redirectConfig } from "@/helpers/redirect-config";
 
 export default function BookingListPage() {
   const { data, isLoading } = useBookingHistory();
+
+  //  Danh sách booking từ API
   const bookings = data?.data ?? [];
+
+  //  CHỈ HIỂN THỊ ĐƠN ĐÃ THANH TOÁN
+  const paidBookings = bookings.filter(
+    (item) => item.payment_status === "paid"
+  );
 
   return (
     <div className="container mx-auto py-14 max-w-6xl">
@@ -36,9 +42,9 @@ export default function BookingListPage() {
       )}
 
       {/* ----------- LIST ----------- */}
-      {!isLoading && bookings.length > 0 && (
+      {!isLoading && paidBookings.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {bookings.map((item) => (
+          {paidBookings.map((item) => (
             <Card
               key={item.id}
               className="
@@ -53,7 +59,7 @@ export default function BookingListPage() {
               {/* ===== CONTENT ===== */}
               <div className="space-y-6">
                 {/* MOVIE TITLE */}
-                <h2 className="text-xl font-bold text-black-600 dark:text-black-400">
+                <h2 className="text-xl font-bold">
                   {item.movie_title}
                 </h2>
 
@@ -71,7 +77,9 @@ export default function BookingListPage() {
                       Ngày đặt
                     </p>
                     <p>
-                      {moment(item.booking_date).format("DD/MM/YYYY HH:mm")}
+                      {moment(item.booking_date).format(
+                        "DD/MM/YYYY HH:mm"
+                      )}
                     </p>
 
                     <p className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
@@ -96,7 +104,10 @@ export default function BookingListPage() {
 
                     {item.transaction_code && (
                       <p className="text-xs text-gray-500 mt-1">
-                        GD: <span className="font-medium">{item.transaction_code}</span>
+                        GD:{" "}
+                        <span className="font-medium">
+                          {item.transaction_code}
+                        </span>
                       </p>
                     )}
                   </div>
@@ -105,14 +116,14 @@ export default function BookingListPage() {
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       Tổng tiền
                     </p>
-                    <p className="text-2xl font-bold text-red-500 dark:text-red-350">
-                      {item.final_amount.toLocaleString()} đ
+                    <p className="text-2xl font-bold text-red-500">
+                      {item.final_amount.toLocaleString("vi-VN")} đ
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* ===== BUTTON (GIỮ NGUYÊN) ===== */}
+              {/* ===== BUTTON ===== */}
               <Link
                 href={redirectConfig.bookingHistoryDetail(item.id)}
                 className="
@@ -135,9 +146,9 @@ export default function BookingListPage() {
       )}
 
       {/* ----------- EMPTY ----------- */}
-      {!isLoading && bookings.length === 0 && (
+      {!isLoading && paidBookings.length === 0 && (
         <p className="text-center text-gray-500 dark:text-gray-400 mt-14">
-          Bạn chưa có đơn vé nào.
+          Bạn chưa có vé nào đã thanh toán.
         </p>
       )}
     </div>

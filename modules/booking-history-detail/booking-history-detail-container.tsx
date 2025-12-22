@@ -13,6 +13,7 @@ import {
   Armchair,
   Clock,
   CheckCircle,
+  XCircle,
 } from "lucide-react";
 import QRCode from "react-qr-code";
 
@@ -69,13 +70,22 @@ export default function BookingDetailPage() {
               <p className="text-xs text-gray-500 text-center">
                 Đưa mã QR này cho nhân viên soát vé để vào rạp
               </p>
+              <p className="text-xs text-yellow-600 text-center ">
+                Lưu ý: Vui lòng không chia sẻ mã QR để đảm bảo tính bảo mật - mã chỉ được check-in một lần
+              </p>
 
-              {booking.is_checked_in && (
-                <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
-                  <CheckCircle className="w-4 h-4" />
-                  Đã check-in
-                </span>
-              )}
+                {booking.is_checked_in ? (
+                  <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
+                    <CheckCircle className="w-4 h-4" />
+                    Đã check-in
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-red-100 text-red-700 text-sm font-medium">
+                    <XCircle className="w-4 h-4" />
+                    Chưa check-in
+                  </span>
+                )}
+
             </div>
           </div>
 

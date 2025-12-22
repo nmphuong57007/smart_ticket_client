@@ -9,6 +9,7 @@ export interface BookingItem {
   payment_method: string;
   transaction_code: string;
   final_amount: number;
+  payment_status: string;           
 }
 
 export interface BookingListResponse {
