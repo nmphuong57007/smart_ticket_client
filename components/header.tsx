@@ -19,6 +19,8 @@ import { getToken } from "@/helpers/has-token";
 import UserDropdown from "./user-dropdown";
 import { useProfile } from "@/api/hooks/use-profile";
 import { Skeleton } from "./ui/skeleton";
+import Image from "next/image";
+
 
 const navItems = [
   { href: redirectConfig.home, label: "Trang chủ", icon: Home },
@@ -34,6 +36,9 @@ const navItems = [
 
 
 ];
+
+const logo_images = ["images/z7354881002111_1b99d2c7a32dac02255a741b86326d52.jpg"];
+
 
 export default function Header() {
   const pathname = usePathname();
@@ -53,10 +58,16 @@ export default function Header() {
         {/* Logo */}
         <Link
           href={redirectConfig.home}
-          className="font-bold text-xl flex items-center gap-2"
+          className="font-bold text-xl flex items-center"
         >
-          <Clapperboard className="h-5 w-5" />
-          ST
+          <Image
+              src={logo_images[0]}
+              alt="SmartTicket Logo"
+              width={55}
+              height={50}
+              className="rounded"
+              priority
+            />
         </Link>
 
         {/* Navigation Buttons */}

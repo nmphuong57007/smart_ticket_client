@@ -45,6 +45,8 @@ export default function MovieSeatMap({
   const { data, isLoading } = useSeatMap(showtimeId);
   const seatMap: SeatItem[][] = useMemo(() => data?.seat_map ?? [], [data]);
   const { data: showtime } = useShowtimeDetail(showtimeId);
+  const [showPriceDetail, setShowPriceDetail] = useState(false);
+
 
 const movieId = showtime?.movie_id ?? null;
 
@@ -250,6 +252,10 @@ const applicablePromotions = useMemo(() => {
       .reduce((sum, s) => sum + s.price, 0);
   }, [selectedSeats]);
 
+  const selectedSeatDetails = useMemo(() => {
+  return flatSeats.filter((s) => selectedSeats.includes(s.code));
+}, [flatSeats, selectedSeats]);
+
   const comboTotal = useMemo(
     () => combos.reduce((sum, c) => sum + c.price * c.qty, 0),
     [combos]
@@ -381,7 +387,7 @@ const applicablePromotions = useMemo(() => {
           </div>
         )}
 
-        <Separator />
+        <Separator />  
         
         {/* Order Summary */}
         <div className="text-sm space-y-2">
@@ -483,6 +489,37 @@ const applicablePromotions = useMemo(() => {
             </p>
           )}
         </div>
+
+        {/* ==== PRICE DETAIL TOGGLE ==== */}
+<div className="space-y-2">
+  <button
+    onClick={() => setShowPriceDetail(!showPriceDetail)}
+    className="flex justify-between w-full text-sm font-medium text-black-600"
+  >
+    <span>Chi tiết giá</span>
+    <span>{showPriceDetail ? "▲" : "▼"}</span>
+  </button>
+
+  {showPriceDetail && (
+    <div className="rounded-xl border bg-gray-50 p-3 space-y-2 text-sm">
+      <p className="font-semibold text-gray-700">Vé xem phim</p>
+
+      {selectedSeatDetails.map((seat) => (
+        <div
+          key={seat.code}
+          className="flex justify-between items-center"
+        >
+          <span>Ghế {seat.code}</span>
+          <span className="font-medium">
+            {seat.price.toLocaleString("vi-VN")}đ
+          </span>
+        </div>
+      ))}
+
+    </div>
+  )}
+</div>
+
 
         {/* Total */}
         <div className="flex justify-between font-semibold text-base mt-4 text-red-500">
