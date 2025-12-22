@@ -21,15 +21,29 @@ export default function MovieDetailShowtime({
   /* =======================
    * TIME
    ======================= */
-  const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
+  const now = new Date();
 
   /* =======================
-   * FILTER DATE >= TODAY
+   * FILTER DATE + SHOWTIME
+   * - Ẩn ngày đã qua
+   * - Ẩn suất chiếu đã qua
+   * - Ngày không còn suất => Ẩn
    ======================= */
   const validShowtimeData = useMemo(() => {
-    return showtimeData.filter((item) => item.date >= todayStr);
-  }, [showtimeData, todayStr]);
+    return showtimeData
+      .map((item) => {
+        const validShowtimes = item.showtimes.filter((st) => {
+          const showDateTime = new Date(`${item.date} ${st.show_time}`);
+          return showDateTime > now;
+        });
+
+        return {
+          ...item,
+          showtimes: validShowtimes,
+        };
+      })
+      .filter((item) => item.showtimes.length > 0);
+  }, [showtimeData, now]);
 
   const dates = validShowtimeData.map((item) => item.date);
 
@@ -42,13 +56,13 @@ export default function MovieDetailShowtime({
   );
 
   /* =======================
-   * AUTO SELECT FIRST DATE
+   * AUTO SELECT FIRST VALID DATE
    ======================= */
   useEffect(() => {
-    if (!selectedDate && dates.length) {
-      setSelectedDate(dates[0]);
+    if (!selectedDate && validShowtimeData.length) {
+      setSelectedDate(validShowtimeData[0].date);
     }
-  }, [dates, selectedDate]);
+  }, [validShowtimeData, selectedDate]);
 
   const selectedDateData = validShowtimeData.find(
     (item) => item.date === selectedDate
@@ -57,17 +71,6 @@ export default function MovieDetailShowtime({
   if (!validShowtimeData.length) {
     return <p>Không có lịch chiếu trong các ngày tới.</p>;
   }
-
-  /* =======================
-   * FILTER SHOWTIME BY TIME (ONLY TODAY)
-   ======================= */
-  const filteredShowtimes =
-    selectedDateData?.showtimes.filter((st) => {
-      if (selectedDate !== todayStr) return true;
-
-      const showDateTime = new Date(`${selectedDate} ${st.show_time}`);
-      return showDateTime > today;
-    }) ?? [];
 
   /* =======================
    * LANGUAGE LABEL
@@ -83,7 +86,7 @@ export default function MovieDetailShowtime({
   /* =======================
    * GROUP BY LANGUAGE
    ======================= */
-  const groupedByLanguage = filteredShowtimes.reduce(
+  const groupedByLanguage = (selectedDateData?.showtimes ?? []).reduce(
     (acc, st) => {
       const key = LANGUAGE_LABEL[st.language_type] || "Khác";
       if (!acc[key]) acc[key] = [];
@@ -122,13 +125,15 @@ export default function MovieDetailShowtime({
       <Card className="p-4">
         {Object.entries(groupedByLanguage).map(([label, items]) => (
           <div key={label} className="mb-4">
-            <div className="font-semibold mb-2">{label}</div>
+            <div className="mb-2 font-semibold">{label}</div>
 
             <div className="flex flex-wrap gap-3">
               {items.map((st) => (
                 <Button
                   key={st.id}
-                  variant={selectedShowtimeId === st.id ? "default" : "outline"}
+                  variant={
+                    selectedShowtimeId === st.id ? "default" : "outline"
+                  }
                   size="sm"
                   onClick={() => {
                     setSelectedShowtimeId(st.id);

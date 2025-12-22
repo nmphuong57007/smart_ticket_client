@@ -82,10 +82,10 @@ export default function ProfileContainer() {
                 </div>
 
                 <div className="w-full text-sm">
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <span className="text-muted-foreground">Points</span>
                     <span>{user?.points ?? 0}</span>
-                  </div>
+                  </div> */}
 
                   <div className="flex justify-between mt-2">
                     <span className="text-muted-foreground">Tạo</span>

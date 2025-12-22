@@ -15,6 +15,10 @@ import { SelectedCombo } from "@/api/interfaces/product-interface";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { hasToken } from "@/helpers/has-token";
+import MovieDetailReviews from "./movie-detail-reviews";
+import { useReviewsByMovie } from "@/api/hooks/use-review-by-movie";
+import MovieDetailReviewForm from "./movie-detail-create-review";
+import { useProfile } from "@/api/hooks/use-profile";
 
 interface MovieDetailContainerProps {
   movieId: string;
@@ -24,7 +28,7 @@ export default function MovieDetailContainer({ movieId }: MovieDetailContainerPr
   const router = useRouter();
 
   // ============================
-  // 🔐 KIỂM TRA LOGIN
+  // KIỂM TRA LOGIN
   // ============================
   useEffect(() => {
     if (!hasToken()) {
@@ -37,6 +41,12 @@ export default function MovieDetailContainer({ movieId }: MovieDetailContainerPr
   const { data: movie, isLoading: movieLoading } = useMovieDetail(numericId);
   const { data: showtimes, isLoading: showtimeLoading } = useMovieShowtimes(numericId);
   const { data: products } = useProducts();
+  const { data: reviewRes, isLoading: reviewLoading } =
+  useReviewsByMovie(numericId);
+  const { data: profile } = useProfile();
+
+const reviews = reviewRes?.data || [];
+
 
   const [selectedShowtimeId, setSelectedShowtimeId] = useState<number | null>(null);
   const [selectedShowtimeText, setSelectedShowtimeText] = useState<string>("");
@@ -91,6 +101,28 @@ export default function MovieDetailContainer({ movieId }: MovieDetailContainerPr
             combos={selectedCombos}
           />
         )}
+      </div>
+      {/* ===== ĐÁNH GIÁ PHIM (CUỐI TRANG) ===== */}
+      <div className="mt-20  py-12">
+        <div className="mx-auto max-full px-4">
+          <div className="mb-8 flex items-center gap-4">
+            <div className="flex-1 border-t" />
+              <h3 className="text-lg font-semibold text-gray-700">
+                Đánh giá & bình luận
+              </h3>
+            <div className="flex-1 border-t" />
+          </div>
+          
+          {/* FORM GỬI REVIEW */}
+          <MovieDetailReviewForm movieId={numericId} />
+
+          <MovieDetailReviews
+            reviews={reviews}
+            isLoading={reviewLoading}
+            profile={profile?.data?.user}
+            movieId={movie?.id}
+          />
+        </div>
       </div>
     </div>
   );
