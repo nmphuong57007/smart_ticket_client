@@ -381,7 +381,7 @@ const applicablePromotions = useMemo(() => {
           </div>
         )}
 
-        <Separator />
+        <Separator />  
         
         {/* Order Summary */}
         <div className="text-sm space-y-2">
