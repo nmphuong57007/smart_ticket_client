@@ -14,6 +14,10 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
+
+
+const logo_images = ["images/z7354881002111_1b99d2c7a32dac02255a741b86326d52.jpg"];
 
 export default function Footer() {
   return (
@@ -24,7 +28,14 @@ export default function Footer() {
           {/* Thương hiệu + giới thiệu */}
           <div className="space-y-4 lg:col-span-1">
             <div className="flex items-center gap-2">
-              <Clapperboard className="h-6 w-6" />
+          <Image
+              src={logo_images[0]}
+              alt="SmartTicket Logo"
+              width={55}
+              height={50}
+              className="rounded"
+              priority
+            />
               <span className="font-bold text-xl">Smart Ticket</span>
             </div>
 

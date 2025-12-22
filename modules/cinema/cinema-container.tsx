@@ -35,13 +35,13 @@ export default function CinemaAboutPage() {
       {/* Description */}
       <div className="mt-6 space-y-4 text-gray-700">
         <p>
-          Rạp chiếu phim Smart Ticket là rạp hiện đại với 5 phòng chiếu, âm thanh chuẩn Dolby Atmos và màn hình lớn chất lượng cao.
+          Rạp chiếu phim Smart Ticket là rạp hiện đại với 6 phòng chiếu, âm thanh chuẩn Dolby Atmos và màn hình lớn chất lượng cao.
 
         </p>
 
         <p>
           Rạp được trang bị hệ thống máy chiếu, phòng chiếu hiện đại với 100% thiết bị
-          nhập khẩu từ nước ngoài, với 4 phòng chất lượng chuẩn 4K và 5 phòng chiếu tiêu chuẩn.
+          nhập khẩu từ nước ngoài, với 3 phòng chất lượng chuẩn 4K và 3 phòng chiếu tiêu chuẩn.
           Hệ thống âm thanh Dolby 7.1 mang đến trải nghiệm điện ảnh sống động nhất.
         </p>
 

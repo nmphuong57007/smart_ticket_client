@@ -108,7 +108,7 @@ export default function HomeContainer() {
 
       {/* ====================== PHIM ĐANG CHIẾU ====================== */}
       <div className="flex justify-between items-center mt-12 mb-4">
-        <h2 className="text-2xl font-bold">🎬 Phim đang chiếu</h2>
+        <h2 className="text-2xl font-bold">Phim đang chiếu</h2>
         <Link href="/movie/movie-showing" className="text-black dark:text-white font-semibold hover:opacity-70 transition">
           Xem tất cả
         </Link>
@@ -124,7 +124,7 @@ export default function HomeContainer() {
 
       {/* ====================== PHIM SẮP CHIẾU ====================== */}
       <div className="flex justify-between items-center mt-14 mb-4">
-        <h2 className="text-2xl font-bold">⏳ Phim sắp chiếu</h2>
+        <h2 className="text-2xl font-bold">Phim sắp chiếu</h2>
         <Link href="/movie/upcoming-movies" className="text-black dark:text-white font-semibold hover:opacity-70 transition">
           Xem tất cả
         </Link>

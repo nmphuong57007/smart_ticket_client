@@ -113,7 +113,7 @@ function HeroPromoCard({ item }: { item: Item }) {
 
   return (
     <article className="md:col-span-2 md:row-span-2 h-full">
-      <Link href={`/content/${item.slug}`} className="group block h-full">
+      {/* <Link href={`/content/${item.slug}`} className="group block h-full"> */}
         <div className={`${CARD_BASE} h-full group-hover:shadow-xl`}>
           {/* h-full để cao bằng 2 box bên phải, min-h tránh bị thấp quá */}
           <div className="relative w-full h-full min-h-[260px]">
@@ -144,7 +144,7 @@ function HeroPromoCard({ item }: { item: Item }) {
             </div>
           </div>
         </div>
-      </Link>
+      {/* </Link> */}
     </article>
   );
 }
@@ -185,7 +185,7 @@ function SideNewsSection({ items }: { items: Item[] }) {
 function HeroNewsCard({ item }: { item: Item }) {
   return (
     <article className="md:col-span-2 md:row-span-2 h-full">
-      <Link href={`/content/${item.slug}`} className="group block h-full">
+      {/* <Link href={`/content/${item.slug}`} className="group block h-full"> */}
         <div className={`${CARD_BASE} h-full group-hover:shadow-xl`}>
           <div className="relative w-full h-full min-h-[260px]">
             {item.image ? (
@@ -207,7 +207,7 @@ function HeroNewsCard({ item }: { item: Item }) {
             </div>
           </div>
         </div>
-      </Link>
+      {/* </Link> */}
     </article>
   );
 }
@@ -221,7 +221,7 @@ function SmallSideNews({ item }: { item: Item }) {
 
   return (
     <article>
-      <Link href={`/content/${item.slug}`} className="group block">
+      {/* <Link href={`/content/${item.slug}`} className="group block"> */}
         <div className={`${CARD_BASE} group-hover:shadow-lg`}>
           {/* Box nhỏ – chiều cao đã thu gọn */}
           <div className="relative w-full h-24 sm:h-28 md:h-32">
@@ -248,7 +248,7 @@ function SmallSideNews({ item }: { item: Item }) {
             {publishedDate}
           </p>
         )}
-      </Link>
+      {/* </Link> */}
     </article>
   );
 }
