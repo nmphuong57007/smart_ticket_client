@@ -1,6 +1,7 @@
 "use client";
 
 import FormProfile from "./form-profile";
+import FormChangePassword from "./form-change-password";
 import { useProfile } from "@/api/hooks/use-profile";
 import { Spinner } from "@/components/ui/spinner";
 import { useEffect, useState } from "react";
@@ -40,12 +41,29 @@ export default function ProfileContainer() {
             <CardHeader>
               <div>
                 <CardTitle>Thông tin tài khoản</CardTitle>
-                <CardDescription>Quản lý thông tin cá nhân của bạn</CardDescription>
+                <CardDescription>
+                  Quản lý thông tin cá nhân của bạn
+                </CardDescription>
               </div>
             </CardHeader>
 
             <CardContent>
               <FormProfile />
+            </CardContent>
+          </Card>
+
+          <Card className="mt-6">
+            <CardHeader>
+              <div>
+                <CardTitle>Đổi mật khẩu</CardTitle>
+                <CardDescription>
+                  Thay đổi mật khẩu để bảo mật tài khoản
+                </CardDescription>
+              </div>
+            </CardHeader>
+
+            <CardContent>
+              <FormChangePassword />
             </CardContent>
           </Card>
         </div>
@@ -89,12 +107,16 @@ export default function ProfileContainer() {
 
                   <div className="flex justify-between mt-2">
                     <span className="text-muted-foreground">Tạo</span>
-                    <span>{user?.created_at ? formatDate(user.created_at) : "-"}</span>
+                    <span>
+                      {user?.created_at ? formatDate(user.created_at) : "-"}
+                    </span>
                   </div>
 
                   <div className="flex justify-between mt-2">
                     <span className="text-muted-foreground">Cập nhật</span>
-                    <span>{user?.updated_at ? formatDate(user.updated_at) : "-"}</span>
+                    <span>
+                      {user?.updated_at ? formatDate(user.updated_at) : "-"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -112,7 +134,7 @@ function formatDate(value?: string | null) {
     const d = new Date(value);
     // Use explicit locale to avoid server/client locale mismatches
     return d.toLocaleString("vi-VN");
-  } catch (e) {
+  } catch {
     return String(value);
   }
 }

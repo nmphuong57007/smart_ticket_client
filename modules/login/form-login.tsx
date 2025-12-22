@@ -83,7 +83,15 @@ export default function FormLogin() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Mật khẩu</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Mật khẩu</FormLabel>
+                <Link
+                  href={redirectConfig.forgotPassword}
+                  className="text-sm text-blue-600 hover:underline hover:text-blue-800"
+                >
+                  Quên mật khẩu?
+                </Link>
+              </div>
               <FormControl>
                 <Input
                   type="password"

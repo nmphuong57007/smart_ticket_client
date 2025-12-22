@@ -10,7 +10,6 @@ export default function PaymentContainer() {
   const params = useSearchParams();
 
   // Lấy dữ liệu truyền từ trang trước
-  const bookingId = Number(params.get("booking_id"));
   const total = Number(params.get("total"));
 
   const [successOpen, setSuccessOpen] = useState(false);

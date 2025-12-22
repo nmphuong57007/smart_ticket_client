@@ -2,8 +2,6 @@
 
 import { useSeatMap } from "@/api/hooks/use-seat-map";
 import { usePromotionApply } from "@/api/hooks/use-promotion-apply";
-import { useBooking } from "@/api/hooks/use-booking";
-import { useCreatePayment } from "@/api/hooks/use-payment";
 
 import { useMemo, useState, useEffect } from "react";
 
@@ -11,8 +9,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
@@ -52,8 +48,6 @@ const movieId = showtime?.movie_id ?? null;
   const flatSeats = seatMap.flat();
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
-
-  const createPayment = useCreatePayment();
 
   const getSeatIdByCode = (code: string): number | null => {
     const seat = flatSeats.find((s) => s.code === code);
@@ -171,7 +165,6 @@ const movieId = showtime?.movie_id ?? null;
 
   const { data: promoData } = usePromotions();
   const promotionApply = usePromotionApply();
-  const booking = useBooking();
 
   // Lọc mã hợp lệ theo phim
 const applicablePromotions = useMemo(() => {
@@ -248,7 +241,7 @@ const applicablePromotions = useMemo(() => {
     return flatSeats
       .filter((s) => selectedSeats.includes(s.code))
       .reduce((sum, s) => sum + s.price, 0);
-  }, [selectedSeats]);
+  }, [selectedSeats, flatSeats]);
 
   const comboTotal = useMemo(
     () => combos.reduce((sum, c) => sum + c.price * c.qty, 0),

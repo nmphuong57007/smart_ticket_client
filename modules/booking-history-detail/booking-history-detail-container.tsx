@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/card";
 import {
   Film,
   CreditCard,
-  QrCode,
   MapPin,
   Armchair,
   Clock,

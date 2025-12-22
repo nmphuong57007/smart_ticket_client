@@ -8,7 +8,6 @@ import moment from "moment";
 import {
   Calendar,
   MapPin,
-  QrCode,
   CreditCard,
   ArrowRight,
 } from "lucide-react";

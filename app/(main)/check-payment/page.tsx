@@ -8,25 +8,21 @@ const CheckPayment = () => {
   const [status, setStatus] = useState("success");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  const [orderCode, setOrderCode] = useState("");
 
   useEffect(() => {
     const rsp = params.get("RspCode");
-    const order = params.get("Order");
     const msg = params.get("Message");
 
     if (rsp === "00") {
       setStatus("success");
       setTitle("Thanh toán thành công");
       setMessage("Cảm ơn bạn đã thanh toán thành công.");
-      setOrderCode(order ?? "");
     } else {
       setStatus("error");
       setTitle("Thanh toán thất bại");
       setMessage(msg ?? "Đã có lỗi xảy ra trong quá trình thanh toán.");
-      setOrderCode(order ?? "");
     }
-  }, []);
+  }, [params]);
 
   return (
     <div className="flex items-center justify-center p-4">
