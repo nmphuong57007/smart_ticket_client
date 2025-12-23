@@ -1,6 +1,7 @@
 "use client";
 
 import FormProfile from "./form-profile";
+import FormChangePassword from "./form-change-password";
 import { useProfile } from "@/api/hooks/use-profile";
 import { Spinner } from "@/components/ui/spinner";
 import { useEffect, useState } from "react";
@@ -13,6 +14,12 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/ui/tabs";
 
 export default function ProfileContainer() {
   const { data, isLoading } = useProfile();
@@ -26,75 +33,124 @@ export default function ProfileContainer() {
 
   if (!mounted || isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
+      <div className="flex items-center justify-center py-24">
         <Spinner />
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="grid gap-6 md:grid-cols-3 items-start">
+    <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        {/* LEFT - TABS */}
         <div className="md:col-span-2">
-          <Card>
-            <CardHeader>
-              <div>
-                <CardTitle>Thông tin tài khoản</CardTitle>
-                <CardDescription>Quản lý thông tin cá nhân của bạn</CardDescription>
-              </div>
-            </CardHeader>
+          <Tabs defaultValue="profile" className="w-full">
+            <TabsList className="mb-6 grid w-full grid-cols-2">
+              <TabsTrigger value="profile">
+                Thông tin tài khoản
+              </TabsTrigger>
+              <TabsTrigger value="password">
+                Đổi mật khẩu
+              </TabsTrigger>
+            </TabsList>
 
-            <CardContent>
-              <FormProfile />
-            </CardContent>
-          </Card>
+            {/* TAB: PROFILE */}
+            <TabsContent value="profile">
+              <Card className="rounded-2xl shadow-sm">
+                <CardHeader className="border-b">
+                  <CardTitle className="text-xl">
+                    Thông tin tài khoản
+                  </CardTitle>
+                  <CardDescription>
+                    Quản lý thông tin cá nhân của bạn
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="pt-6">
+                  <FormProfile />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* TAB: PASSWORD */}
+            <TabsContent value="password">
+              <Card className="rounded-2xl shadow-sm">
+                <CardHeader className="border-b">
+                  <CardTitle className="text-xl">
+                    Đổi mật khẩu
+                  </CardTitle>
+                  <CardDescription>
+                    Thay đổi mật khẩu để bảo mật tài khoản
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="pt-6">
+                  <FormChangePassword />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
 
-        <div className="md:col-span-1">
-          <Card>
-            <CardContent>
-              <div className="flex flex-col items-center gap-4 rounded-lg p-4">
-                <Avatar className="size-20">
+        {/* RIGHT - PROFILE SUMMARY */}
+        <div>
+          <Card className="sticky top-24 rounded-2xl shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center gap-5">
+                <Avatar className="h-24 w-24 border">
                   {user?.avatar ? (
                     <AvatarImage
                       src={user.avatar}
                       alt={user.fullname ?? "avatar"}
                     />
                   ) : (
-                    <AvatarFallback>
-                      {(user?.fullname || "").slice(0, 2)}
+                    <AvatarFallback className="text-xl font-semibold">
+                      {(user?.fullname || "").slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   )}
                 </Avatar>
 
-                <div className="text-center">
-                  <div className="font-semibold">{user?.fullname}</div>
+                <div className="text-center space-y-1">
+                  <div className="text-lg font-semibold">
+                    {user?.fullname}
+                  </div>
                   <div className="text-sm text-muted-foreground">
                     {user?.email}
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-2">
-                  {user?.role && <Badge variant="outline">{user.role}</Badge>}
+                <div className="flex flex-wrap justify-center gap-2">
+                  {user?.role && (
+                    <Badge variant="outline" className="capitalize">
+                      {user.role}
+                    </Badge>
+                  )}
                   {user?.status && (
-                    <Badge variant="secondary">{user.status}</Badge>
+                    <Badge variant="secondary" className="capitalize">
+                      {user.status}
+                    </Badge>
                   )}
                 </div>
 
-                <div className="w-full text-sm">
-                  {/* <div className="flex justify-between">
-                    <span className="text-muted-foreground">Points</span>
-                    <span>{user?.points ?? 0}</span>
-                  </div> */}
-
-                  <div className="flex justify-between mt-2">
+                <div className="w-full text-sm space-y-3 pt-4 border-t">
+                  <div className="flex justify-between">
                     <span className="text-muted-foreground">Tạo</span>
-                    <span>{user?.created_at ? formatDate(user.created_at) : "-"}</span>
+                    <span>
+                      {user?.created_at
+                        ? formatDate(user.created_at)
+                        : "-"}
+                    </span>
                   </div>
 
-                  <div className="flex justify-between mt-2">
-                    <span className="text-muted-foreground">Cập nhật</span>
-                    <span>{user?.updated_at ? formatDate(user.updated_at) : "-"}</span>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">
+                      Cập nhật
+                    </span>
+                    <span>
+                      {user?.updated_at
+                        ? formatDate(user.updated_at)
+                        : "-"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -109,10 +165,8 @@ export default function ProfileContainer() {
 function formatDate(value?: string | null) {
   if (!value) return "-";
   try {
-    const d = new Date(value);
-    // Use explicit locale to avoid server/client locale mismatches
-    return d.toLocaleString("vi-VN");
-  } catch (e) {
+    return new Date(value).toLocaleString("vi-VN");
+  } catch {
     return String(value);
   }
 }
