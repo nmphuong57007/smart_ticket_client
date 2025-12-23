@@ -21,7 +21,6 @@ export default function MovieDetailShowtime({
   /* =======================
    * TIME
    ======================= */
-  const now = new Date();
 
   /* =======================
    * FILTER DATE + SHOWTIME
@@ -30,6 +29,7 @@ export default function MovieDetailShowtime({
    * - Ngày không còn suất => Ẩn
    ======================= */
   const validShowtimeData = useMemo(() => {
+    const now = new Date();
     return showtimeData
       .map((item) => {
         const validShowtimes = item.showtimes.filter((st) => {
@@ -43,7 +43,7 @@ export default function MovieDetailShowtime({
         };
       })
       .filter((item) => item.showtimes.length > 0);
-  }, [showtimeData, now]);
+  }, [showtimeData]);
 
   const dates = validShowtimeData.map((item) => item.date);
 

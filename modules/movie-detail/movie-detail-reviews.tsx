@@ -69,7 +69,7 @@ export default function MovieDetailReviews({
 
   {/* BOX CHỨA TOÀN BỘ COMMENT */}
   <div className="rounded-lg border bg-white shadow-sm">
-    {reviews.map((r, index) => (
+    {reviews.map((r) => (
       <div key={r.id} className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
