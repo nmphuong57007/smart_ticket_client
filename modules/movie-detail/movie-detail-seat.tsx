@@ -2,8 +2,6 @@
 
 import { useSeatMap } from "@/api/hooks/use-seat-map";
 import { usePromotionApply } from "@/api/hooks/use-promotion-apply";
-import { useBooking } from "@/api/hooks/use-booking";
-import { useCreatePayment } from "@/api/hooks/use-payment";
 
 import { useMemo, useState, useEffect } from "react";
 
@@ -11,8 +9,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
@@ -45,8 +41,6 @@ export default function MovieSeatMap({
   const { data, isLoading } = useSeatMap(showtimeId);
   const seatMap: SeatItem[][] = useMemo(() => data?.seat_map ?? [], [data]);
   const { data: showtime } = useShowtimeDetail(showtimeId);
-  const [showPriceDetail, setShowPriceDetail] = useState(false);
-
 
 const movieId = showtime?.movie_id ?? null;
 
@@ -54,8 +48,6 @@ const movieId = showtime?.movie_id ?? null;
   const flatSeats = seatMap.flat();
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
-
-  const createPayment = useCreatePayment();
 
   const getSeatIdByCode = (code: string): number | null => {
     const seat = flatSeats.find((s) => s.code === code);
@@ -173,7 +165,6 @@ const movieId = showtime?.movie_id ?? null;
 
   const { data: promoData } = usePromotions();
   const promotionApply = usePromotionApply();
-  const booking = useBooking();
 
   // Lọc mã hợp lệ theo phim
 const applicablePromotions = useMemo(() => {
@@ -250,11 +241,7 @@ const applicablePromotions = useMemo(() => {
     return flatSeats
       .filter((s) => selectedSeats.includes(s.code))
       .reduce((sum, s) => sum + s.price, 0);
-  }, [selectedSeats]);
-
-  const selectedSeatDetails = useMemo(() => {
-  return flatSeats.filter((s) => selectedSeats.includes(s.code));
-}, [flatSeats, selectedSeats]);
+  }, [selectedSeats, flatSeats]);
 
   const comboTotal = useMemo(
     () => combos.reduce((sum, c) => sum + c.price * c.qty, 0),
@@ -387,7 +374,7 @@ const applicablePromotions = useMemo(() => {
           </div>
         )}
 
-        <Separator />  
+        <Separator />
         
         {/* Order Summary */}
         <div className="text-sm space-y-2">
@@ -489,37 +476,6 @@ const applicablePromotions = useMemo(() => {
             </p>
           )}
         </div>
-
-        {/* ==== PRICE DETAIL TOGGLE ==== */}
-<div className="space-y-2">
-  <button
-    onClick={() => setShowPriceDetail(!showPriceDetail)}
-    className="flex justify-between w-full text-sm font-medium text-black-600"
-  >
-    <span>Chi tiết giá</span>
-    <span>{showPriceDetail ? "▲" : "▼"}</span>
-  </button>
-
-  {showPriceDetail && (
-    <div className="rounded-xl border bg-gray-50 p-3 space-y-2 text-sm">
-      <p className="font-semibold text-gray-700">Vé xem phim</p>
-
-      {selectedSeatDetails.map((seat) => (
-        <div
-          key={seat.code}
-          className="flex justify-between items-center"
-        >
-          <span>Ghế {seat.code}</span>
-          <span className="font-medium">
-            {seat.price.toLocaleString("vi-VN")}đ
-          </span>
-        </div>
-      ))}
-
-    </div>
-  )}
-</div>
-
 
         {/* Total */}
         <div className="flex justify-between font-semibold text-base mt-4 text-red-500">
